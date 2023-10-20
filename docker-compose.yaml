@@ -1,0 +1,142 @@
+version: '3.1'
+
+services:
+  card-service:
+    build:
+      context: ./card-micro-service
+      dockerfile: ../dockerfile
+    networks:
+      - card-market-net
+      - card-db-net
+      - proxy-web
+    depends_on:
+      - db-card
+
+  front:
+    image: nginx:1.25.0-alpine3.17
+    networks:
+      - proxy-web
+    volumes:
+      - ./front:/usr/share/nginx/html
+  proxy-reverse:
+    image: nginx:1.25.0-alpine3.17
+    networks:
+      - proxy-web
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - user-service
+      - card-service
+      - game-service
+      - market-service
+
+  user-service:
+    build:
+      context: ./user-micro-service
+      dockerfile: ../dockerfile
+    networks:
+      - user-market-net
+      - user-db-net
+      - proxy-web
+    depends_on:
+      - db-user
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+
+  market-service:
+    build:
+      context: ./market-micro-service
+      dockerfile: ../dockerfile
+    networks:
+      - card-market-net
+      - user-market-net
+      - market-db-net
+      - proxy-web
+    expose:
+      - 80
+    depends_on:
+      - db-market
+
+  game-service:
+    build:
+      context: ./game-micro-service
+      dockerfile: ../dockerfile
+    networks:
+      - proxy-web
+      - game-db-net
+    depends_on:
+      - db-game
+
+  db-user:
+    image: postgres
+    restart: always
+    volumes:
+      - db-user:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: app
+    networks:
+      - user-db-net
+    ports:
+      - "5432:5432"
+
+  db-game:
+    image: postgres
+    restart: always
+    volumes:
+      - db-game:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: app
+    ports:
+      - "5433:5432"
+    networks:
+     - game-db-net
+
+  db-card:
+    image: postgres
+    restart: always
+    volumes:
+      - db-card:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: app
+    networks:
+      - card-db-net
+    ports:
+      - "5435:5432"
+
+  db-market:
+    networks:
+      - market-db-net
+    image: postgres
+    restart: always
+    volumes:
+      - db-market:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: app
+    ports:
+      - "5434:5432"
+
+networks:
+  user-db-net:
+  user-market-net:
+  card-db-net:
+  card-market-net:
+  game-db-net:
+  market-db-net:
+  proxy-web:
+
+volumes:
+  db-user:
+  db-card:
+  db-market:
+  db-game:
