@@ -45,6 +45,16 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
 
+  authentication-service:
+    build:
+      context: ./authentication-micro-service
+      dockerfile: ../dockerfile
+    networks:
+      - user-market-net
+      - proxy-web
+
+    depends_on:
+      - user-service
 
   market-service:
     build:
@@ -84,11 +94,11 @@ services:
     ports:
       - "5432:5432"
 
-  db-game:
+  db-notification:
     image: postgres
     restart: always
     volumes:
-      - db-game:/var/lib/postgresql/data
+      - db-notification:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
@@ -96,7 +106,7 @@ services:
     ports:
       - "5433:5432"
     networks:
-     - game-db-net
+     - notification-db-net
 
   db-card:
     image: postgres
@@ -112,13 +122,13 @@ services:
     ports:
       - "5435:5432"
 
-  db-market:
+  db-store:
     networks:
-      - market-db-net
+      - store-db-net
     image: postgres
     restart: always
     volumes:
-      - db-market:/var/lib/postgresql/data
+      - db-store:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
@@ -131,12 +141,12 @@ networks:
   user-market-net:
   card-db-net:
   card-market-net:
-  game-db-net:
-  market-db-net:
+  notification-db-net:
+  store-db-net:
   proxy-web:
 
 volumes:
   db-user:
   db-card:
-  db-market:
-  db-game:
+  db-store:
+  db-notification:
