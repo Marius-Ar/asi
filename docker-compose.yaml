@@ -6,7 +6,7 @@ services:
       context: ./card-micro-service
       dockerfile: ../dockerfile
     networks:
-      - card-market-net
+      - card-store-net
       - card-db-net
       - proxy-web
     depends_on:
@@ -29,15 +29,16 @@ services:
     depends_on:
       - user-service
       - card-service
-      - game-service
-      - market-service
+      - store-service
+      - notification-service
+      - authentication-service
 
   user-service:
     build:
       context: ./user-micro-service
       dockerfile: ../dockerfile
     networks:
-      - user-market-net
+      - user-store-net
       - user-db-net
       - proxy-web
     depends_on:
@@ -50,35 +51,31 @@ services:
       context: ./authentication-micro-service
       dockerfile: ../dockerfile
     networks:
-      - user-market-net
+      - user-store-net
       - proxy-web
-
     depends_on:
       - user-service
 
-  market-service:
+  store-service:
     build:
-      context: ./market-micro-service
+      context: store-micro-service
       dockerfile: ../dockerfile
     networks:
-      - card-market-net
-      - user-market-net
-      - market-db-net
+      - card-store-net
+      - user-store-net
+      - store-db-net
       - proxy-web
     expose:
       - 80
     depends_on:
-      - db-market
+      - db-store
 
-  game-service:
+  notification-service:
     build:
-      context: ./game-micro-service
+      context: ./notification-micro-service
       dockerfile: ../dockerfile
     networks:
       - proxy-web
-      - game-db-net
-    depends_on:
-      - db-game
 
   db-user:
     image: postgres
@@ -92,21 +89,7 @@ services:
     networks:
       - user-db-net
     ports:
-      - "5432:5432"
-
-  db-notification:
-    image: postgres
-    restart: always
-    volumes:
-      - db-notification:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: app
-    ports:
-      - "5433:5432"
-    networks:
-     - notification-db-net
+      - "5438:5432"
 
   db-card:
     image: postgres
@@ -138,10 +121,9 @@ services:
 
 networks:
   user-db-net:
-  user-market-net:
+  user-store-net:
   card-db-net:
-  card-market-net:
-  notification-db-net:
+  card-store-net:
   store-db-net:
   proxy-web:
 
@@ -149,4 +131,3 @@ volumes:
   db-user:
   db-card:
   db-store:
-  db-notification:

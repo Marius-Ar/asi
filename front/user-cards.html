@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <!-- Standard Meta -->
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <!-- Site Properties -->
+    <title>Grid Example - Semantic</title>
+
+    <link rel="stylesheet" type="text/css" href="./css/semantic/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/custom.css">
+    <link rel="stylesheet" type="text/css" href="./css/market.css">
+
+</head>
+
+<body>
+<div id="header-container"></div>
+
+
+<div class="container">
+    <div class="ui">
+        <div class="ten wide column">
+            <!--  <h3 class="ui center aligned header"> My Card List</h3> -->
+            <h3 class="ui aligned header"> My Card List</h3>
+            <!------------------------------------------------------------------------->
+            <!--    ----------------------------- List ----------------------------- -->
+                <!------------------------------------------------------------------------->
+                <table class="ui fixed selectable single line celled table" id="cardListId">
+                    <thead>
+                    <tr>
+                        <th class="three wide">Name</th>
+                        <th class="three wide">Description</th>
+                        <th>Family</th>
+                        <th>HP</th>
+                        <th>Energy</th>
+                        <th>Defence</th>
+                        <th>Attack</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tableContent">
+                    <template id="row">
+                        <tr>
+                            <td>
+                                <img class="ui avatar image" src={{img_src}}> <span>{{name}} </span>
+                            </td>
+                            <td>{{description}}</td>
+                            <td>{{family_name}}</td>
+                            <td>{{hp}}</td>
+                            <td>{{energy}}</td>
+                            <td>{{defense}}</td>
+                            <td>{{attack}}</td>
+                            <td>{{price}}$</td>
+                            <td>
+                                <div id="{{id}}" onclick="sellCard(this.id)" class="ui vertical blue animated button"
+                                     tabindex="0">
+                                    <div class="hidden content">Sell</div>
+                                    <div class="visible content">
+                                        <i class="shop icon"></i>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                    </tbody>
+                </table>
+        </div>
+    </div>
+</div>
+<div id="notificationModal" style="display: none;">
+    <div id="notificationContent" class="notification-content">
+        <h2 id="notificationTitle"></h2>
+        <p id="notificationDescription"></p>
+    </div>
+</div>
+<script src="./js/common.js"></script>
+<script src="./js/jquery-3.3.1.min.js"></script>
+<script src="./css/semantic/semantic.js"></script>
+<script src="./js/user-cards.js"></script>
+<script src="./js/header.js"></script>
+</body>
+</html>
