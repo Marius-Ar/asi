@@ -14,6 +14,12 @@ public class NotificationService {
 
     @JmsListener(destination = "${spring-messaging.queue.name}")
     public void onNotificationInQueue(String notification) {
-        webSocketService.broadcastToAllSessions(notification);
+        if (notification.contains(";")){
+            String sessionId = notification.split(";")[0];
+            String message = notification.split(";")[1];
+            webSocketService.sendMessageToSession(sessionId, message);
+        } else {
+            webSocketService.broadcastToAllSessions(notification);
+        }
     }
 }
