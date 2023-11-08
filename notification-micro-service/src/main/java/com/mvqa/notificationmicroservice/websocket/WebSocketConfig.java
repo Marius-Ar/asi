@@ -11,9 +11,15 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
+  public final SocketHandler socketHandler;
+
+  public WebSocketConfig(){
+    this.socketHandler = new SocketHandler();
+  }
+
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-    registry.addHandler(new SocketHandler(), "/socket")
+    registry.addHandler(this.socketHandler, "/socket")
         .setAllowedOrigins("*");
   }
 
