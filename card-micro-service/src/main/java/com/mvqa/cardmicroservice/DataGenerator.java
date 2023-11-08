@@ -31,7 +31,6 @@ public class DataGenerator implements ApplicationRunner {
             "Snorlax"
     };
 
-
     @Override
     public void run(ApplicationArguments args) {
         List<Card> cards = createCards(0,4, 1L);
@@ -39,6 +38,7 @@ public class DataGenerator implements ApplicationRunner {
         cardRepository.saveAll(cards);
         cardRepository.saveAll(cards2);
     }
+
     public List<Card> createCards(int start, int end, Long userId){
         List<Card> cards = new ArrayList<>();
         for (int i = start; i < end; i++) {
@@ -57,5 +57,4 @@ public class DataGenerator implements ApplicationRunner {
         }
         return  cards;
     }
-
 }
