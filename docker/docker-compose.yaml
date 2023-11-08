@@ -39,6 +39,8 @@ services:
       - "61616:61616"
       - "61613:61613"
       - "8161:8161"
+    networks:
+      - esb
     environment:
       ACTIVEMQ_DISALLOW_WEBCONSOLE: false
       ACTIVEMQ_USERNAME: myuser
@@ -87,6 +89,7 @@ services:
       dockerfile: ../docker/dockerfile
     networks:
       - proxy-web
+      - esb
 
   db-user:
     image: postgres
@@ -137,6 +140,7 @@ networks:
   card-store-net:
   store-db-net:
   proxy-web:
+  esb:
 
 volumes:
   db-user:
