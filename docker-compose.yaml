@@ -78,7 +78,6 @@ services:
       - user-store-net
       - store-db-net
       - proxy-web
-
     depends_on:
       - db-store
 
