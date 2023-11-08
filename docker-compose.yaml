@@ -78,8 +78,7 @@ services:
       - user-store-net
       - store-db-net
       - proxy-web
-    expose:
-      - 80
+
     depends_on:
       - db-store
 
@@ -116,7 +115,7 @@ services:
     networks:
       - card-db-net
     ports:
-      - "5435:5432"
+      - "5439:5432"
 
   db-store:
     networks:
