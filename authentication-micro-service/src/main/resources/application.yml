@@ -10,7 +10,3 @@ spring:
       hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true
-    datasource:
-      url: ${DATASOURCE_URL}
-      password: ${DATASOURCE_PASSWORD}
-      username: ${DATASOURCE_USERNAME}
