@@ -2,9 +2,12 @@ package com.mvqa.cardmicroservice.service;
 
 import com.mvqa.cardmicroservice.model.Card;
 import com.mvqa.cardmicroservice.repository.CardRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
+
 @Service
 public class CardService {
     private final CardRepository cardRepository;
@@ -25,19 +28,25 @@ public class CardService {
         return (List<Card>) cardRepository.findAll();
     }
 
-    public List<Card> findUserCards(long userId) {
-        return cardRepository.findByUserId(userId);
+    public List<Card> findUserCards(UUID userId) {
+        return  (List<Card>) cardRepository.findAll();
     }
 
-    public Card sellCard(Long id) {
-        return cardRepository.save(findCardById(id).setUserId(null));
+    public Card sellCard(Long id,UUID userId) {
+        return cardRepository.save(findCardById(id));
     }
 
-    public Card addCardToUser(Long id, Long userId) {
-        return cardRepository.save(findCardById(id).setUserId(userId));
+    public Card addCardToUser(Long id, UUID userId) {
+        return cardRepository.save(findCardById(id));
     }
 
-    public List<Card> findUserCardsAbleToFight(long userId) {
-        return cardRepository.findByUserIdAndEnergyIsGreaterThan(userId,0.0);
+    public List<Card> findUserCardsAbleToFight(UUID userId) {
+        return (List<Card>) cardRepository.findAll();
+    }
+    @Transactional
+    public void removeUserFromCard(UUID userId, Long cardId) {
+        Card card = cardRepository.findById(cardId).orElseThrow(() -> new RuntimeException("Card not found"));
+        card.getUserCards().removeIf(userCard -> userCard.getUserId().equals(userId));
+        cardRepository.save(card);
     }
 }

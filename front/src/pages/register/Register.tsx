@@ -1,7 +1,10 @@
-import React, {ChangeEvent, FormEvent, useState} from 'react';
-import {redirect} from 'react-router-dom';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {NotificationType} from "../../core/components/notification/Notification";
+import {useNotification} from "../../core/components/notification/NotificationContext";
 
 export function Register() {
+    const { showNotification } = useNotification();
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -9,9 +12,10 @@ export function Register() {
         passwordConfirmation: ''
     });
     const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = event.target;
+        const { name, value } = event.target;
         setFormData(prevState => ({
             ...prevState,
             [name]: value
@@ -21,21 +25,16 @@ export function Register() {
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
 
+        // Vérifications de base
         if (formData.password !== formData.passwordConfirmation) {
-            alert('Les mots de passe ne correspondent pas.');
-            return;
-        }
-        if (formData.username.length < 3) {
-            alert('Le nom d\'utilisateur doit contenir au moins 3 caractères.');
-            return;
-        }
-        if (formData.password.length < 6) {
-            alert('Le mot de passe doit contenir au moins 6 caractères.');
+            setErrorMessage('Les mots de passe ne correspondent pas.');
             return;
         }
 
+        const userRegisterApiUri = process.env.REACT_APP_API_AUTHENTICATE_SERVICE;
+
         try {
-            const response = await fetch('/user-service/user', {
+            const response = await fetch(`${userRegisterApiUri}register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,17 +42,19 @@ export function Register() {
                 body: JSON.stringify(formData),
             });
 
-            if (response.status === 200) {
-                setErrorMessage('');
-                return redirect('/connexion');
+            if (response.ok) {
+                navigate('/login');
+                showNotification(NotificationType.SUCCESS, "Création réussie mais n'oublie pas que tu es nul Alex.");
             } else {
-                setErrorMessage('Erreur lors de l\'inscription: ' + await response.text());
+                const errorText = await response.text();
+                setErrorMessage('Erreur lors de l\'inscription: ' + errorText);
+
             }
         } catch (error) {
             console.error('Error:', error);
+            setErrorMessage('Erreur de réseau ou du serveur.');
         }
     };
-
     return (
         <div className="ui container" style={{margin: '10%'}}>
             <h2 className="ui header">Inscription</h2>

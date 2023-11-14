@@ -22,9 +22,7 @@ public class CardMapper {
                 card.getEnergy(),
                 card.getDefense(),
                 card.getActualValue(),
-                card.getImageUrl(),
-                card.getUserId()
-        );
+                card.getImageUrl());
     }
 
     public List<CardDTO> toDtos(Iterable<Card> cards) {
@@ -44,8 +42,7 @@ public class CardMapper {
                 cardDTO.energy(),
                 cardDTO.defense(),
                 cardDTO.actualValue(),
-                cardDTO.imageUrl(),
-                cardDTO.userId()
+                cardDTO.imageUrl()
         );
     }
 }

@@ -1,4 +1,0 @@
-server.port: ${SERVER_PORT}
-spring:
-  main:
-    allow-bean-definition-overriding: true

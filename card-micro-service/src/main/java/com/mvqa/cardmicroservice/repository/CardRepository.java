@@ -6,11 +6,12 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface CardRepository extends CrudRepository<Card, Long>, PagingAndSortingRepository<Card, Long> {
 
-    List<Card> findByUserId(Long id);
-    List<Card> findByUserIdAndEnergyIsGreaterThan(Long id,Double energy);
+/*    List<Card> findByUserId(UUID id);
+    List<Card> findByUserIdAndEnergyIsGreaterThan(UUID id, Double energy);*/
     List<Card> findByName(String name);
 }

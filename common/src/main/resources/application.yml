@@ -1,0 +1,18 @@
+server.port: ${SERVER_PORT}
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+    datasource:
+      url: ${DATASOURCE_URL}
+      password: ${DATASOURCE_PASSWORD}
+      username: ${DATASOURCE_USERNAME}
+services:
+  user: ${API_USER}
