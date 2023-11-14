@@ -2,6 +2,7 @@ import {Login} from "./pages/login/Login";
 import React from 'react';
 import {Register} from './pages/register/Register';
 import {Market} from './pages/market/Market';
+import {Game} from './pages/Game/Game'
 
 const routes = [
     {
@@ -15,6 +16,10 @@ const routes = [
     {
         path: '/market',
         element: <Market/>,
+    },
+    {
+        path: '/game',
+        element: <Game/>
     }
 ]
 
