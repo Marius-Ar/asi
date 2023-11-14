@@ -5,8 +5,12 @@
     <title>Chat Room</title>
 </head>
 <body>
-<input type="text" id="roomId" placeholder="Enter Room ID">
-<button onclick="joinRoom()">Join Room</button>
+<div id="list-users-select" style="background-color: yellow">
+
+</div>
+<div id="list-users">
+
+</div>
 <hr>
 <ul id="messages"></ul>
 <input type="text" id="messageInput" placeholder="Type your message">
@@ -15,18 +19,69 @@
 <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
 <script>
     const socket = io();
+    const users = [];
+    let currentUser;
+    let roomId;
 
-    function joinRoom() {
-        const roomId = document.getElementById('roomId').value;
+    function getUsers(){
+        fetch('http://localhost:3000/users')
+            .then(response => response.json())
+            .then(data => {
+                users.push(...data);
+                const listUsersDiv = document.getElementById('list-users');
+                const listUsersSelect = document.getElementById('list-users-select');
+                users.forEach(user => {
+                    const buttonSelect = document.createElement('button');
+                    buttonSelect.innerText = user.name;
+                    buttonSelect.onclick = () => {
+                        currentUser = user;
+                        listUsersSelect.innerHTML = 'Current user: ' + user.name;
+                    }
+                    listUsersSelect.appendChild(buttonSelect);
+
+
+                    const button = document.createElement('button');
+                    button.innerText = user.name;
+                    button.onclick = () => {
+                        if(!currentUser){
+                            alert('Please select current user');
+                            return;
+                        }
+                        fetch('http://localhost:3000/create-chat-room', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                users: [currentUser, user]
+                            })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if(data){
+                                    roomId = data.roomId;
+                                    document.getElementById('messages').innerHTML = 'room id: ' + roomId;
+                                    joinRoom(roomId);
+                                }
+                            });
+                    }
+                    listUsersDiv.appendChild(button);
+                });
+            });
+    }
+
+    function joinRoom(roomId) {
         socket.emit('join room', roomId);
     }
 
     function sendMessage() {
-        const roomId = document.getElementById('roomId').value;
         const message = document.getElementById('messageInput').value;
-        socket.emit('message', roomId, message);
+        socket.emit('message', roomId, message, currentUser.id);
         document.getElementById('messageInput').value = '';
     }
+
+    getUsers();
+
 
     socket.on('message', (message) => {
         const messages = document.getElementById('messages');
