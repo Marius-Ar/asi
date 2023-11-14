@@ -6,6 +6,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class DataGenerator implements ApplicationRunner {
@@ -33,13 +34,10 @@ public class DataGenerator implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        List<Card> cards = createCards(0,4, 1L);
-        List<Card> cards2 = createCards(5,10, 2L);
-        cardRepository.saveAll(cards);
-        cardRepository.saveAll(cards2);
+        createCards(0,9);
     }
 
-    public List<Card> createCards(int start, int end, Long userId){
+    public List<Card> createCards(int start, int end){
         List<Card> cards = new ArrayList<>();
         for (int i = start; i < end; i++) {
             Card card = new Card();
@@ -53,8 +51,8 @@ public class DataGenerator implements ApplicationRunner {
             card.setActualValue(10.5 + i);
             card.setImageUrl(POKEMON_IMAGE_URL.replace("@{id}@", String.valueOf(i + 1)));
             cards.add(card);
-            card.setUserId(userId);
         }
+        cardRepository.saveAll(cards);
         return  cards;
     }
 }

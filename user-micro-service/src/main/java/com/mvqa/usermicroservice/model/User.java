@@ -4,14 +4,14 @@ package com.mvqa.usermicroservice.model;
 import jakarta.persistence.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column(name = "username", unique = true)
     @NotNull(message = "Name is required")
@@ -28,10 +28,14 @@ public class User {
     @Column(name = "balance")
     private Double balance;
 
-    public User() {
-
+    @PrePersist
+    public void initializeUUID() {
+        if (id == null) {
+            id = UUID.randomUUID();
+        }
     }
-
+    public User() {
+        }
     public User(@NotNull String username, @NotNull String mail, @NotNull String password) {
         this.username = username;
         this.mail = mail;
@@ -39,15 +43,14 @@ public class User {
         this.balance = 500.0;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public User setId(Long id) {
+    public User setId(UUID id) {
         this.id = id;
         return this;
     }
-
 
     public String getUsername() {
         return username;

@@ -13,11 +13,9 @@ import java.util.List;
 public class LoginInterceptor implements HandlerInterceptor {
     public LoginInterceptor() {
         super();
-        System.out.println("construct");
-
     }
 
-    private List<String> uriList = List.of("/user","/user/login","/header.html","/connexion.html", "/register.html", "/css/.*","/js/.*");
+    private List<String> uriList = List.of("/card/user","/register","/error","/user/register","/user/login","/login", "/css/.*","/js/.*");
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
@@ -25,7 +23,6 @@ public class LoginInterceptor implements HandlerInterceptor {
          if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("userId")) {
-                    // Si le cookie existe, continuez la chaîne d'interception
                     return true;
                 }
             }

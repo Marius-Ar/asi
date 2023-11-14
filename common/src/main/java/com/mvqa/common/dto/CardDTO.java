@@ -1,5 +1,7 @@
 package com.mvqa.common.dto;
 
+import java.util.UUID;
+
 public record CardDTO(
         Long id,
         String description,
@@ -10,7 +12,6 @@ public record CardDTO(
         Double energy,
         Double defense,
         Double actualValue,
-        String imageUrl,
-        Long userId
+        String imageUrl
 ) {
 }

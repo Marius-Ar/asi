@@ -2,6 +2,9 @@ package com.mvqa.cardmicroservice.model;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+import java.util.UUID;
+
 @Entity
 @Table(name = "card")
 public class Card {
@@ -36,13 +39,12 @@ public class Card {
 
     @Column(name = "image_url")
     private String imageUrl;
-
-    @Column(name = "user_id")
-    private Long userId;
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserCard> userCards;
 
     public Card() { }
 
-    public Card(Long id, String description, String name, String familyName, Double hp, Double attack, Double energy, Double defense, Double actualValue, String imageUrl, Long userId) {
+    public Card(Long id, String description, String name, String familyName, Double hp, Double attack, Double energy, Double defense, Double actualValue, String imageUrl) {
         this.id = id;
         this.description = description;
         this.name = name;
@@ -53,7 +55,6 @@ public class Card {
         this.defense = defense;
         this.actualValue = actualValue;
         this.imageUrl = imageUrl;
-        this.userId = userId;
     }
 
     public String getDescription() {
@@ -142,12 +143,12 @@ public class Card {
         this.imageUrl = imageUrl;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Set<UserCard> getUserCards() {
+        return userCards;
     }
 
-    public Card setUserId(Long userId) {
-        this.userId = userId;
+    public Card setUserCards(Set<UserCard> userCards) {
+        this.userCards = userCards;
         return this;
     }
 }

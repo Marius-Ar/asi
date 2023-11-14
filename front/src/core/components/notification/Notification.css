@@ -1,0 +1,43 @@
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: -400px; /* Commence en dehors de l'écran à droite */
+    padding: 20px 40px; /* Augmenter le padding pour un rectangle plus grand */
+    border-radius: 8px;
+    color: white;
+    min-width: 300px; /* Taille minimale plus grande */
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.2); /* Optionnel: Ajouter une ombre */
+    animation: slideInOut 3s forwards; /* Animation pour glisser de droite et disparaître */
+}
+
+.notification.success { background-color: green; }
+.notification.error { background-color: red; }
+.notification.warning { background-color: orange; }
+.notification.info { background-color: blue; }
+
+@keyframes slideInOut {
+    0%, 100% {
+        right: -400px; /* Démarre et finit hors de l'écran */
+        opacity: 0;
+    }
+    10%, 90% {
+        right: 20px; /* Glisse à l'intérieur de l'écran puis ressort */
+        opacity: 1;
+    }
+}
+
+/* Barre de Timeline */
+.notification-timeline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px; /* Hauteur de la timeline */
+    background-color: rgba(255,255,255,0.5); /* Couleur de la timeline */
+    animation: fillTimeline 3s forwards; /* Animation pour remplir la timeline */
+}
+
+@keyframes fillTimeline {
+    from { width: 0; }
+    to { width: 100%; }
+}
