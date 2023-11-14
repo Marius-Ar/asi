@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Room</title>
+</head>
+<body>
+<input type="text" id="roomId" placeholder="Enter Room ID">
+<button onclick="joinRoom()">Join Room</button>
+<hr>
+<ul id="messages"></ul>
+<input type="text" id="messageInput" placeholder="Type your message">
+<button onclick="sendMessage()">Send</button>
+
+<script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+<script>
+    const socket = io();
+
+    function joinRoom() {
+        const roomId = document.getElementById('roomId').value;
+        socket.emit('join room', roomId);
+    }
+
+    function sendMessage() {
+        const roomId = document.getElementById('roomId').value;
+        const message = document.getElementById('messageInput').value;
+        socket.emit('message', roomId, message);
+        document.getElementById('messageInput').value = '';
+    }
+
+    socket.on('message', (message) => {
+        const messages = document.getElementById('messages');
+        const li = document.createElement('li');
+        li.appendChild(document.createTextNode(message));
+        messages.appendChild(li);
+    });
+</script>
+</body>
+</html>
