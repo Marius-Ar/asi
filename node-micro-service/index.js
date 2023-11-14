@@ -18,10 +18,8 @@ app.get('/users', (req, res) => {
 
 app.post('/create-chat-room', (req, res) => {
     // Get users ids ordered
-    console.log('BODY', req.body)
     const users = req.body?.users;
     if(!users || users.length !== 2) return;
-    console.log(users)
     const ids = users.map(user => user.id).sort();
     const roomId = ids.join('-');
     // return roomId
@@ -34,8 +32,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('message', (roomId, message, userId) => {
-        console.log(userId)
-        io.to(roomId).emit('message', message);
+        io.to(roomId).emit('message', message, userId);
     });
 });
 

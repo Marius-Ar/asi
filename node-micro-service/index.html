@@ -83,10 +83,11 @@
     getUsers();
 
 
-    socket.on('message', (message) => {
+    socket.on('message', (message, userId) => {
         const messages = document.getElementById('messages');
         const li = document.createElement('li');
-        li.appendChild(document.createTextNode(message));
+        const user = users.find(user => user.id === userId);
+        li.appendChild(document.createTextNode(user.name + ' : ' + message));
         messages.appendChild(li);
     });
 </script>
