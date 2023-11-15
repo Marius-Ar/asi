@@ -23,7 +23,7 @@ app.post('/create-chat-room', (req, res) => {
     const ids = users.map(user => user.id).sort();
     const roomId = ids.join('-');
     // return roomId
-    res.send({ roomId: roomId });
+    res.send({ roomId });
 });
 
 io.on('connection', (socket) => {

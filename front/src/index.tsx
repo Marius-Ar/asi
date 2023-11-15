@@ -18,7 +18,6 @@ ReactDOM.createRoot(
                 <NotificationProvider>
                     <Header/>
                     <RouterProvider router={router}/>
-
                 </NotificationProvider>
         </Provider>
     </React.StrictMode>

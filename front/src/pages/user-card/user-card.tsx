@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Card} from "../../core/intefaces/card.interface";
+import {Card} from "../../core/interfaces/card.interface";
 import {AppState} from "../../store/store";
 import {useSelector} from "react-redux";
 

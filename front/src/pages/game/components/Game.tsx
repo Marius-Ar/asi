@@ -1,5 +1,5 @@
-import CardDetail from "../../core/components/cardDetail/CardDetail";
-import CardShort from "../../core/components/cardShort/CardShort";
+import CardDetail from "../../../core/components/card-detail/CardDetail";
+import CardShort from "../../../core/components/card-short/CardShort";
 import React from "react";
 
 export function Game(){

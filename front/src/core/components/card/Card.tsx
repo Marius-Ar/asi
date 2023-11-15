@@ -1,7 +1,7 @@
 import React from 'react';
 import './css/semantic/semantic.min.css';
 import './css/custom.css';
-import {Card} from '../../intefaces/card.interface';
+import {Card} from '../../interfaces/card.interface';
 
 export function CardComponent({ card }: { card: Card }) {
     const buyCard = () => {

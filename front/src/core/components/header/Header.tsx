@@ -26,20 +26,22 @@ export function Header() {
                 </div>
                 <div className="sub header"><span>{100}</span>$</div>
             </div>
-
             <h3 className="ui left floated header">
                 <i className="money icon"></i>
                 <div className="content">
-                    Market
                     <div className="sub header"><a href="/market"> Market</a></div>
                 </div>
             </h3>
-
             <h3 className="ui left floated header">
                 <i className="book icon"></i>
                 <div className="content">
-                    My cards
                     <div className="sub header"><a href="/user-card">My Cards</a> </div>
+                </div>
+            </h3>
+            <h3 className="ui left floated header">
+                <i className="gamepad icon"></i>
+                <div className="content">
+                    <div className="sub header"><a href="/game/join">Game</a> </div>
                 </div>
             </h3>
         </header>

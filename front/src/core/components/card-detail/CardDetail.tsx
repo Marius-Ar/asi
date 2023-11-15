@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card} from "../../intefaces/card.interface";
+import {Card} from "../../interfaces/card.interface";
 
 const CardDetail: React.FC<Card> = (card) => {
     return (

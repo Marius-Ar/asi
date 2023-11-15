@@ -17,8 +17,7 @@ public class DataGenerator implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-            userService.saveUser(new UserRegisterDTO("test@test.test", "password", "password", "Axel Perraud"));
-            userService.saveUser(new UserRegisterDTO("example@example.example", "password", "password", "example"));
+        userService.saveUser(new UserRegisterDTO("test@test.test", "password", "password", "Axel Perraud"));
+        userService.saveUser(new UserRegisterDTO("example@example.example", "password", "password", "example"));
     }
-
 }

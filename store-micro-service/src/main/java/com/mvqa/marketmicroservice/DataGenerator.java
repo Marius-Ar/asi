@@ -10,7 +10,6 @@ public class DataGenerator implements ApplicationRunner {
 
     private final StoreService storeService;
 
-
     public DataGenerator(StoreService storeService) {
         this.storeService = storeService;
     }

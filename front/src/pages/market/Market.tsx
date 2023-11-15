@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card} from '../../core/intefaces/card.interface';
+import {Card} from '../../core/interfaces/card.interface';
 
 export function Market() {
     const [cards, setCards] = React.useState([] as Card[]);

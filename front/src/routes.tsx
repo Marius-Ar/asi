@@ -1,10 +1,11 @@
 import {Login} from "./pages/login/Login";
-import React from 'react';
 import {Register} from './pages/register/Register';
 import {Market} from './pages/market/Market';
-import {Game} from './pages/Game/Game'
-import ProtectedRoute from "./core/components/protectedRoute/ProtectedRoute";
-import {CardList} from "./pages/user-card/user-card";
+import ProtectedRoute from './core/components/protected-route/ProtectedRoute';
+import {CardList} from './pages/user-card/user-card';
+
+import gameRoutes from './pages/game/game.routes';
+import React from 'react';
 
 const routes = [
     {
@@ -17,20 +18,21 @@ const routes = [
     },
     {
         path: '/market',
-        element:  ( <ProtectedRoute>
-            <Market/>
-        </ProtectedRoute>),
-    },
-    {
-        path: '/game',
-        element: <Game/>
+        element: (
+            <ProtectedRoute>
+                <Market/>
+            </ProtectedRoute>
+        ),
     },
     {
         path: '/user-card',
-        element:  ( <ProtectedRoute>
-            <CardList/>
-        </ProtectedRoute>),
-    }
-]
+        element: (
+            <ProtectedRoute>
+                <CardList/>
+            </ProtectedRoute>
+        ),
+    },
+    gameRoutes
+];
 
 export default routes;

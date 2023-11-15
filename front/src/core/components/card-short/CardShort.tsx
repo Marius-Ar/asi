@@ -1,11 +1,10 @@
 import React from 'react';
-import {Card} from "../../intefaces/card.interface";
+import {Card} from "../../interfaces/card.interface";
 
 const CardShort: React.FC<Card> = (card) => {
     return (
         <div className="ui special cards">
             <div className="card">
-
                 <div className="content">
                     <div className="ui grid">
                         <div className="three column row">
