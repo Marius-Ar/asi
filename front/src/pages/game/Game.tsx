@@ -1,7 +1,7 @@
-import CardDetail from "../../core/components/cardDetail/CardDetail";
-import CardShort from "../../core/components/cardShort/CardShort";
 import React from "react";
 import {GameChat} from "./GameChat";
+import CardDetail from "../../core/components/card-detail/CardDetail";
+import CardShort from "../../core/components/card-short/CardShort";
 
 export function Game(){
     const actionpoints = 100;
