@@ -11,24 +11,24 @@ import java.util.List;
 
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
+    private final List<String> uriList = List.of("/user", "/card/user", "/card/user/register", "/register", "/error", "/user/register", "/user/login", "/login", "/css/.*", "/js/.*");
+
     public LoginInterceptor() {
         super();
     }
 
-    private List<String> uriList = List.of("/card/user","/register","/error","/user/register","/user/login","/login", "/css/.*","/js/.*");
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         Cookie[] cookies = request.getCookies();
-         if (cookies != null) {
+        if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("userId")) {
                     return true;
                 }
             }
         }
-        boolean match = uriList.stream().anyMatch(uri -> request.getRequestURI().matches(uri));
-        if(!match){
+        boolean match = uriList.stream().anyMatch(uri -> request.getRequestURI().contains(uri));
+        if (!match) {
             response.setStatus(403);
             return false;
         }

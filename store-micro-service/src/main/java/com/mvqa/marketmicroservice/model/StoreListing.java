@@ -3,6 +3,7 @@ package com.mvqa.marketmicroservice.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "store_listing")
@@ -22,10 +23,10 @@ public class StoreListing {
     private Double price;
 
     @Column(name = "buyer_id")
-    private Long buyerId;
+    private UUID buyerId;
 
     @Column(name = "seller_id")
-    private Long sellerId;
+    private UUID sellerId;
 
     @Column(name = "sell_date")
     private LocalDate sellDate;
@@ -33,7 +34,7 @@ public class StoreListing {
     public StoreListing() {
     }
 
-    public StoreListing(Long id, LocalDate date, Long cardId, Double price, Long buyerId, Long sellerId, LocalDate sellDate) {
+    public StoreListing(Long id, LocalDate date, Long cardId, Double price, UUID buyerId, UUID sellerId, LocalDate sellDate) {
         this.id = id;
         this.date = date;
         this.cardId = cardId;
@@ -79,20 +80,20 @@ public class StoreListing {
         return this;
     }
 
-    public Long getBuyerId() {
+    public UUID getBuyerId() {
         return buyerId;
     }
 
-    public StoreListing setBuyerId(Long buyerId) {
+    public StoreListing setBuyerId(UUID buyerId) {
         this.buyerId = buyerId;
         return this;
     }
 
-    public Long getSellerId() {
+    public UUID getSellerId() {
         return sellerId;
     }
 
-    public StoreListing setSellerId(Long sellerId) {
+    public StoreListing setSellerId(UUID sellerId) {
         this.sellerId = sellerId;
         return this;
     }

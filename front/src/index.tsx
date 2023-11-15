@@ -13,12 +13,10 @@ const router = createBrowserRouter(routes);
 ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 ).render(
-    <React.StrictMode>
-        <Provider store={store}>
-                <NotificationProvider>
-                    <Header/>
-                    <RouterProvider router={router}/>
-                </NotificationProvider>
-        </Provider>
-    </React.StrictMode>
+    <Provider store={store}>
+        <NotificationProvider>
+            <Header/>
+            <RouterProvider router={router}/>
+        </NotificationProvider>
+    </Provider>
 );

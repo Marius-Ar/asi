@@ -1,10 +1,10 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {ChangeEvent, FormEvent, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {NotificationType} from "../../core/components/notification/Notification";
 import {useNotification} from "../../core/components/notification/NotificationContext";
 
 export function Register() {
-    const { showNotification } = useNotification();
+    const {showNotification} = useNotification();
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -15,7 +15,7 @@ export function Register() {
     const navigate = useNavigate();
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         setFormData(prevState => ({
             ...prevState,
             [name]: value
@@ -31,7 +31,7 @@ export function Register() {
             return;
         }
 
-        const userRegisterApiUri = process.env.REACT_APP_API_AUTHENTICATE_SERVICE;
+        const userRegisterApiUri = process.env.REACT_APP_API_AUTHENTICATE_URI;
 
         try {
             const response = await fetch(`${userRegisterApiUri}register`, {

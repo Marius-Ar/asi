@@ -14,7 +14,6 @@ export function Login() {
     const navigate = useNavigate();
     const isAuthenticated = useSelector((state: AppState) => state.auth.isAuthenticated);
     useEffect(() => {
-        console.log("je passe la",isAuthenticated)
         if (isAuthenticated) {
             navigate('/market');
             showNotification(NotificationType.WARNING, "Vous avez été redirigé vers la page de marché");
@@ -23,7 +22,7 @@ export function Login() {
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const authenticateApiUri = process.env.REACT_APP_API_AUTHENTICATE_SERVICE;
+        const authenticateApiUri = process.env.REACT_APP_API_AUTHENTICATE_URI;
         try {
             const userRegisterDTO = {
                 email,
@@ -39,8 +38,8 @@ export function Login() {
             });
             if (response.ok) {
                 const userId = await response.text();
-                localStorage.setItem('auth', JSON.stringify({ isAuthenticated: true, userId }));
-                dispatch({ type: 'SET_AUTH', payload: { isAuthenticated: true, userId } });
+                localStorage.setItem('auth', JSON.stringify({isAuthenticated: true, userId}));
+                dispatch({type: 'SET_AUTH', payload: {isAuthenticated: true, userId}});
                 navigate('/market');
                 showNotification(NotificationType.SUCCESS, "Connexion réussie");
             } else {

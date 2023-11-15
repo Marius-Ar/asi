@@ -3,30 +3,31 @@ import './css/semantic/semantic.min.css';
 import './css/custom.css';
 import {Card} from '../../interfaces/card.interface';
 
-export function CardComponent({ card }: { card: Card }) {
+export function CardComponent({card}: { card: Card }) {
     const buyCard = () => {
-        console.log("buy card")
     }
 
     return (
         <div>
             <div id="header-container"></div>
 
-            <div style={{ display: 'flex', justifyContent: 'center', height: '100vh', alignItems: 'center' }}>
+            <div style={{display: 'flex', justifyContent: 'center', height: '100vh', alignItems: 'center'}}>
                 <div className="ui segment">
                     <div className="ui special cards">
-                        <div id="content" className="card" style={{ width: '50vh', height: '70vh' }}>
+                        <div id="content" className="card" style={{width: '50vh', height: '70vh'}}>
                             <div className="image imageCard">
                                 <div className="ui fluid image">
                                     <a id="card_id" className="ui left corner label">{card.name}</a>
-                                    <img style={{ maxHeight: '40vh' }} id="card_image" src={card.img_src} alt={card.name} />
+                                    <img style={{maxHeight: '40vh'}} id="card_image" src={card.imageUrl}
+                                         alt={card.name}/>
                                 </div>
                             </div>
                             <div className="content">
                                 <div className="ui form tiny">
                                     <div className="field">
                                         <label id="cardNameId">{card.name}</label>
-                                        <textarea id="card_description" className="overflowHiden" readOnly style={{ maxHeight: '30vh' }}>{card.description}</textarea>
+                                        <textarea id="card_description" className="overflowHiden" readOnly
+                                                  style={{maxHeight: '30vh'}}>{card.description}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -51,14 +52,14 @@ export function CardComponent({ card }: { card: Card }) {
                                     Acheter <span id="card_price"> {card.price}</span>
                                 </div>
                                 <div className="column  ui bottom attached button blue">
-                                    <a style={{ color: 'white' }} href="market.html">Retour</a>
+                                    <a style={{color: 'white'}} href="market.html">Retour</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="notificationModal" style={{ display: 'none' }}>
+            <div id="notificationModal" style={{display: 'none'}}>
                 <div id="notificationContent" className="notification-content">
                     <h2 id="notificationTitle"></h2>
                     <p id="notificationDescription"></p>

@@ -1,30 +1,26 @@
 package com.mvqa.marketmicroservice.service;
 
-import com.mvqa.common.dto.CardSellDTO;
-import com.mvqa.common.dto.UserDTO;
 import com.mvqa.marketmicroservice.model.StoreListing;
 import com.mvqa.marketmicroservice.repository.StoreListingRepository;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class StoreService {
 
     private final StoreListingRepository storeListingRepository;
-
     private final RestTemplate restTemplate;
+
 
     public StoreService(StoreListingRepository storeListingRepository) {
         this.storeListingRepository = storeListingRepository;
         this.restTemplate = new RestTemplate();
+    }
+
+    public StoreListing postStoreListing(StoreListing card) {
+        return storeListingRepository.save(card);
     }
 
     public List<StoreListing> findAllActive() {
@@ -35,7 +31,8 @@ public class StoreService {
         return storeListingRepository.findById(id).orElseThrow();
     }
 
-    public StoreListing buyCard(Long id, Long buyerId) {
+/*
+    public StoreListing buyCard(long id, UUID buyerId) {
         StoreListing cardListing = storeListingRepository.findById(id).orElseThrow();
         if (Objects.equals(buyerId, cardListing.getSellerId())) {
             throw new IllegalArgumentException("L'acheteur ne peut pas être le vendeur");
@@ -62,19 +59,6 @@ public class StoreService {
         storeListingRepository.save(cardListing.setBuyerId(buyerId).setSellDate(LocalDate.now()));
         return cardListing;
     }
+*/
 
-    public StoreListing sellCard(@NotNull CardSellDTO card, @NotNull Long sellerId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.COOKIE, "userId=" + sellerId);
-        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
-
-        restTemplate.exchange("http://card-service/card/sell/" + card.id(), HttpMethod.POST, entity, Object.class);
-        return storeListingRepository.save(
-                new StoreListing()
-                        .setCardId(card.id())
-                        .setDate(LocalDate.now())
-                        .setSellerId(sellerId)
-                        .setPrice(card.price())
-        );
-    }
 }

@@ -2,7 +2,7 @@ import CardDetail from "../../../core/components/card-detail/CardDetail";
 import CardShort from "../../../core/components/card-short/CardShort";
 import React from "react";
 
-export function Game(){
+export function Game() {
     const actionpoints = 100;
     return (
         <div className="ui segment">
@@ -13,7 +13,7 @@ export function Game(){
                             <div className="two wide column">
                                 <div className="ui one  column centered grid">
                                     <div className="row">
-                                        <div className="column"> <i className="user circle huge icon "></i></div>
+                                        <div className="column"><i className="user circle huge icon "></i></div>
                                     </div>
                                     <div className="row">
                                         <div className=" column">Eric Smith</div>
@@ -21,7 +21,8 @@ export function Game(){
 
                                     <div className="row">
                                         <div className="column">
-                                            <div className="ui teal progress" data-percent={actionpoints} id="progressBarId1" >
+                                            <div className="ui teal progress" data-percent={actionpoints}
+                                                 id="progressBarId1">
                                                 <div className="bar"></div>
                                                 <div className="label">Action Points</div>
                                             </div>
@@ -32,21 +33,26 @@ export function Game(){
                             <div className="ten wide column">
                                 <div className="ui four column grid">
                                     <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4} attack={5} img_src={""}/>
+                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
+                                                   defense={4} attack={5} imageUrl={""}/>
                                     </div>
                                     <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4} attack={5} img_src={""}/>
+                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
+                                                   defense={4} attack={5} imageUrl={""}/>
                                     </div>
                                     <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4} attack={5} img_src={""}/>
+                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
+                                                   defense={4} attack={5} imageUrl={""}/>
                                     </div>
                                     <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4} attack={5} img_src={""}/>
+                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
+                                                   defense={4} attack={5} imageUrl={""}/>
                                     </div>
                                 </div>
                             </div>
                             <div className="four wide column">
-                                    <CardDetail id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4} attack={5} img_src={""}/>
+                                <CardDetail id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4}
+                                            attack={5} imageUrl={""}/>
                             </div>
                         </div>
                     </div>
@@ -73,7 +79,7 @@ export function Game(){
                                 <div className="ui one  column centered grid">
                                     <div className="row">
                                         <div className="column">
-                                            <div className="ui teal progress" data-percent="20" id="progressBarId2" >
+                                            <div className="ui teal progress" data-percent="20" id="progressBarId2">
                                                 <div className="label">Action Points</div>
                                                 <div className="bar"></div>
 
@@ -85,7 +91,7 @@ export function Game(){
                                         <div className=" column">Me</div>
                                     </div>
                                     <div className="row">
-                                        <div className="column"> <i className="user circle huge icon "></i></div>
+                                        <div className="column"><i className="user circle huge icon "></i></div>
                                     </div>
 
                                 </div>
@@ -93,27 +99,29 @@ export function Game(){
                             <div className="ten wide column">
                                 <div className="ui four column grid">
                                     <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4} attack={5} img_src={""}/>
+                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
+                                                   defense={4} attack={5} imageUrl={""}/>
                                     </div>
                                     <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4} attack={5} img_src={""}/>
+                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
+                                                   defense={4} attack={5} imageUrl={""}/>
                                     </div>
                                     <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4} attack={5} img_src={""}/>
+                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
+                                                   defense={4} attack={5} imageUrl={""}/>
                                     </div>
                                     <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4} attack={5} img_src={""}/>
+                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
+                                                   defense={4} attack={5} imageUrl={""}/>
                                     </div>
                                 </div>
                             </div>
                             <div className="four wide column">
-                                <CardDetail id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4} attack={5} img_src={""}/>
+                                <CardDetail id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4}
+                                            attack={5} imageUrl={""}/>
                             </div>
                         </div>
                     </div>
-
-
-
 
 
                 </div>

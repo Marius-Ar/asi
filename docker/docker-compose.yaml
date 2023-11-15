@@ -58,6 +58,7 @@ services:
       - proxy-web
     depends_on:
       - db-user
+      - card-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
 
@@ -81,6 +82,7 @@ services:
       - store-db-net
       - proxy-web
     depends_on:
+      - card-service
       - db-store
 
   notification-service:

@@ -1,16 +1,17 @@
 package com.mvqa.usermicroservice.controller;
 
 
+import com.mvqa.common.dto.UserChatDTO;
 import com.mvqa.common.dto.UserDTO;
 import com.mvqa.common.dto.UserDetailsDTO;
 import com.mvqa.common.dto.UserRegisterDTO;
 import com.mvqa.usermicroservice.mapper.UserMapper;
 import com.mvqa.usermicroservice.model.User;
+import com.mvqa.usermicroservice.service.HttpClient;
 import com.mvqa.usermicroservice.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
@@ -20,21 +21,30 @@ public class UserController {
 
     private final UserMapper userMapper;
     private final UserService userService;
+    private final HttpClient httpClient;
 
-    public UserController(UserService userService, UserMapper userMapper) {
+    public UserController(UserService userService, UserMapper userMapper, HttpClient httpClient) {
         this.userService = userService;
         this.userMapper = userMapper;
+        this.httpClient = httpClient;
     }
-    @GetMapping
-    public UserDetailsDTO getUserDetails(@CookieValue(name = "userId") Long userId) {
+
+    @GetMapping()
+    public Iterable<UserChatDTO> getAllUsers() {
+        return userMapper.usersToChatDto(userService.findAll());
+    }
+
+    @GetMapping("/details")
+    public UserDetailsDTO getUserDetails(@CookieValue(name = "userId") UUID userId) {
         return userMapper.toUserDetailsDTO(userService.findById(userId));
     }
 
     @PostMapping("/register")
-    public  ResponseEntity<?>  registerUser(@RequestBody UserRegisterDTO userRegisterDTO) {
+    public ResponseEntity<?> registerUser(@RequestBody UserRegisterDTO userRegisterDTO) {
         try {
-            userService.saveUser(userRegisterDTO);
-        }catch (IllegalArgumentException e) {
+            User user = userService.saveUser(userRegisterDTO);
+            httpClient.addCardsToRegisteredUser(user.getId());
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
         return ResponseEntity.ok("Utilisateur enregistré avec succès");
@@ -55,7 +65,7 @@ public class UserController {
 
 
     @PostMapping("/{id}/balance")
-    public UserDTO updateUserBalance(@PathVariable Long id, @RequestBody Double amount) {
+    public UserDTO updateUserBalance(@PathVariable UUID id, @RequestBody Double amount) {
         return userMapper.toDto(userService.updateUserBalance(id, amount));
     }
 }

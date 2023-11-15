@@ -19,6 +19,15 @@ public class UserCard {
     @JoinColumn(name = "card_id")
     private Card card;
 
+    public UserCard(UUID userId, Card card) {
+        this.userId = userId;
+        this.card = card;
+    }
+
+    public UserCard() {
+
+    }
+
     public Long getId() {
         return id;
     }

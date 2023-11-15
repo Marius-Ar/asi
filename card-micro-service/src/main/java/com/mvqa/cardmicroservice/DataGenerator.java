@@ -1,24 +1,19 @@
 package com.mvqa.cardmicroservice;
+
 import com.mvqa.cardmicroservice.model.Card;
 import com.mvqa.cardmicroservice.repository.CardRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 public class DataGenerator implements ApplicationRunner {
 
     private static final String POKEMON_IMAGE_URL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/@{id}@.png";
-
-    public DataGenerator(CardRepository cardRepository) {
-        this.cardRepository = cardRepository;
-    }
-
     private final CardRepository cardRepository;
-
     private final String[] pokemonNames = {
             "Pikachu",
             "Bulbasaur",
@@ -32,12 +27,16 @@ public class DataGenerator implements ApplicationRunner {
             "Snorlax"
     };
 
-    @Override
-    public void run(ApplicationArguments args) {
-        createCards(0,9);
+    public DataGenerator(CardRepository cardRepository) {
+        this.cardRepository = cardRepository;
     }
 
-    public List<Card> createCards(int start, int end){
+    @Override
+    public void run(ApplicationArguments args) {
+        createCards(0, 9);
+    }
+
+    public List<Card> createCards(int start, int end) {
         List<Card> cards = new ArrayList<>();
         for (int i = start; i < end; i++) {
             Card card = new Card();
@@ -53,6 +52,6 @@ public class DataGenerator implements ApplicationRunner {
             cards.add(card);
         }
         cardRepository.saveAll(cards);
-        return  cards;
+        return cards;
     }
 }

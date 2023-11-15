@@ -1,4 +1,5 @@
 package com.mvqa.authenticationmicroservice.controller;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mvqa.authenticationmicroservice.service.AuthenticationService;
 import com.mvqa.authenticationmicroservice.service.HttpClient;
@@ -23,9 +24,9 @@ public class AuthenticationController {
     private final HttpClient httpClient;
     private final AuthenticationService authenticationService;
 
-    public AuthenticationController(HttpClient httpClient,AuthenticationService authenticationService) {
-        this.httpClient=httpClient;
-        this.authenticationService=authenticationService;
+    public AuthenticationController(HttpClient httpClient, AuthenticationService authenticationService) {
+        this.httpClient = httpClient;
+        this.authenticationService = authenticationService;
     }
 
 
@@ -42,18 +43,21 @@ public class AuthenticationController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utilisateur non connecté");
     }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO loginUser, HttpServletResponse httpServletResponse, HttpServletRequest request) throws JsonProcessingException {
-          try {
-              UUID userId = httpClient.login(loginUser);
-               Cookie cookie = new Cookie("userId", userId.toString());
-               cookie.setPath("/");
-               httpServletResponse.addCookie(cookie);
+        try {
+            UUID userId = httpClient.login(loginUser);
+            Cookie cookie = new Cookie("userId", userId.toString());
+            cookie.setMaxAge(60 * 30);
+            cookie.setPath("/");
+            //en prod cookie.setHttpOnly(true);
+            httpServletResponse.addCookie(cookie);
 
-              return ResponseEntity.ok().body(userId.toString());
-           } catch (ResponseStatusException e){
-              return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
-          }
+            return ResponseEntity.ok().body(userId.toString());
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        }
     }
 
 

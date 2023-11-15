@@ -4,8 +4,6 @@ import com.mvqa.cardmicroservice.mapper.CardMapper;
 import com.mvqa.cardmicroservice.model.Card;
 import com.mvqa.cardmicroservice.service.CardService;
 import com.mvqa.common.dto.CardDTO;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,19 +31,28 @@ public class CardController {
     public CardDTO getCard(@PathVariable Long id) {
         return cardMapper.toDto(cardService.getCard(id));
     }
+
     @GetMapping("/user/fight")
     public List<Card> getUserCardsAbleToFight(@CookieValue(name = "userId") UUID userId) {
         return cardService.findUserCardsAbleToFight(userId);
     }
 
     @GetMapping("/user")
-    public List<CardDTO> getUsersCards(@CookieValue(name = "userId") UUID userId, HttpServletRequest request ){
+    public List<CardDTO> getUsersCards(@CookieValue(name = "userId") UUID userId) {
         return cardMapper.toDtos(cardService.findUserCards(userId));
     }
 
+    @PostMapping("/user/register/{userId}")
+    public void registerUserCards(@PathVariable UUID userId) {
+        if (!cardService.registerUserCards(userId)) {
+            throw new IllegalArgumentException("User already got his cards.");
+        }
+    }
+
+
     @PostMapping("/sell/{id}")
-    public CardDTO sellCard(@CookieValue(name = "userId") UUID userId,@PathVariable Long id) {
-        return cardMapper.toDto(cardService.sellCard(id,userId));
+    public CardDTO sellCard(@CookieValue(name = "userId") UUID userId, @PathVariable Long id) {
+        return cardMapper.toDto(cardService.sellCard(userId, id));
     }
 
     @PostMapping("/add/{id}")

@@ -7,5 +7,5 @@ export interface Card {
     energy: number;
     defense: number;
     attack: number;
-    img_src: string;
+    imageUrl: string;
 }
