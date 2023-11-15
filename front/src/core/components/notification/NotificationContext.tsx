@@ -1,5 +1,5 @@
 import React, {createContext, useContext, useState, ReactNode, useCallback} from 'react';
-import Notification, {NotificationType} from './Notification'; //
+import Notification, {NotificationType} from './Notification';
 
 type NotificationContextType = {
     showNotification: (type: NotificationType, message: string) => void;
@@ -18,6 +18,8 @@ export const useNotification = () => {
     }
     return context;
 };
+
+
 
 export const NotificationProvider = ({children}: NotificationProviderProps) => {
     const [notification, setNotification] = useState({

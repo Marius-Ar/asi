@@ -1,6 +1,7 @@
 import React from 'react';
 import {AppState} from "../../../store/store";
 import {useDispatch, useSelector} from "react-redux";
+import {useNotificationWebsocket} from "../notification/NotificationWebsocket";
 
 export function Header() {
     const dispatch = useDispatch();
@@ -10,6 +11,8 @@ export function Header() {
         dispatch({type: 'SET_AUTH', payload: {isAuthenticated: false, userId: null}});
         localStorage.removeItem('auth');
     };
+
+    useNotificationWebsocket();
 
     if (!isAuthenticated) {
         return null;
