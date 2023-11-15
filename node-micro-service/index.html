@@ -5,17 +5,12 @@
     <title>Chat Room</title>
 </head>
 <body>
-<<<<<<< HEAD
-<input type="text" id="roomId" placeholder="Enter Room ID">
-<button onclick="joinRoom()">Join Room</button>
-=======
 <div id="list-users-select" style="background-color: yellow">
 
 </div>
 <div id="list-users">
 
 </div>
->>>>>>> 4bb0ebe3ccfa7bfe32967c7d87ed591d17231f75
 <hr>
 <ul id="messages"></ul>
 <input type="text" id="messageInput" placeholder="Type your message">
@@ -24,11 +19,6 @@
 <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
 <script>
     const socket = io();
-<<<<<<< HEAD
-
-    function joinRoom() {
-        const roomId = document.getElementById('roomId').value;
-=======
     const users = [];
     let currentUser;
     let roomId;
@@ -81,25 +71,12 @@
     }
 
     function joinRoom(roomId) {
->>>>>>> 4bb0ebe3ccfa7bfe32967c7d87ed591d17231f75
         socket.emit('join room', roomId);
     }
 
     function sendMessage() {
-<<<<<<< HEAD
-        const roomId = document.getElementById('roomId').value;
         const message = document.getElementById('messageInput').value;
         socket.emit('message', roomId, message);
-        document.getElementById('messageInput').value = '';
-    }
-
-    socket.on('message', (message) => {
-        const messages = document.getElementById('messages');
-        const li = document.createElement('li');
-        li.appendChild(document.createTextNode(message));
-=======
-        const message = document.getElementById('messageInput').value;
-        socket.emit('message', roomId, message, currentUser.id);
         document.getElementById('messageInput').value = '';
     }
 
@@ -111,7 +88,6 @@
         const li = document.createElement('li');
         const user = users.find(user => user.id === userId);
         li.appendChild(document.createTextNode(user.name + ' : ' + message));
->>>>>>> 4bb0ebe3ccfa7bfe32967c7d87ed591d17231f75
         messages.appendChild(li);
     });
 </script>
