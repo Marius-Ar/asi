@@ -1,36 +1,54 @@
 import React, {useState} from 'react';
 import {Card} from "../../interfaces/card.interface";
 import ApiStore from "../../api/ApiStore";
-import {Button, Modal} from "semantic-ui-react";
+import {Button, Input, Modal} from "semantic-ui-react";
+import {useSelector} from "react-redux";
+import {AppState} from "../../../store/store";
 
-const CardTable = (props: { cards: Card[]; action: string }) => {
+const CardTable = (props: { cards: Card[]; action: string, onCardRemoved: (cardId: number) => void }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [price, setPrice] = useState('');
     const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
+    const [priceError, setPriceError] = useState<string | null>(null);
+    const userId = useSelector((state: AppState) => state.auth.userId);
 
     const openModal = (cardId: number) => {
+        const selectedCard = props.cards.find(card => card.id === cardId);
         setSelectedCardId(cardId);
         setIsModalOpen(true);
+        setPriceError(null);
+        if (props.action === 'buy' && selectedCard && selectedCard.price) {
+            setPrice(selectedCard.price.toString());
+        }
     };
 
     const handlePriceSubmit = async () => {
         if (selectedCardId != null) {
-            try {
-                if (props.action === 'sell') {
-                    await ApiStore.sellCard({id: selectedCardId, price: parseFloat(price)});
-                } else {
-                    //  await ApiStore.buyCard(selectedCardId, parseFloat(price));
+            const parsedPrice = parseFloat(price);
+            if (!isNaN(parsedPrice) && parsedPrice > 0) {
+                try {
+                    if (props.action === 'sell') {
+                        await ApiStore.sellCard({id: selectedCardId, price: parseFloat(price)});
+                    } else {
+                        const selectedCard = props.cards.find(card => card.id === selectedCardId);
+                        if (selectedCard && selectedCard.storeListingId) {
+                            await ApiStore.buyCard(selectedCard.storeListingId);
+                        }
+                    }
+                    props.onCardRemoved(selectedCardId);
+                    setIsModalOpen(false);
+                    setPrice('');
+                } catch (error) {
+                    console.error('Error during the transaction:', error);
                 }
-                setIsModalOpen(false);
-                setPrice('');
-            } catch (error) {
-                console.error('Error during the transaction:', error);
+            } else {
+                setPriceError('Veuillez entrer un prix valide supérieur à 0.');
             }
         }
     };
 
     return (
-        props.cards.length > 0 ? (
+        props.cards && props.cards.length > 0 ? (
             <div>
 
                 <table className="ui fixed selectable single line celled table">
@@ -59,8 +77,10 @@ const CardTable = (props: { cards: Card[]; action: string }) => {
                             <td>{card.attack}</td>
                             <td>
                                 <button onClick={() => openModal(card.id)}
+                                        disabled={props.action === 'buy' && card.sellerId === userId}
                                         className="ui vertical blue animated button">
-                                    <div className="hidden content">{props.action.toUpperCase()}</div>
+                                    <div
+                                        className="hidden content"> {props.action.toUpperCase()}</div>
                                     <div className="visible content">
                                         <i className={props.action === 'sell' ? "dollar sign icon" : "shopping cart icon"}></i>
                                     </div>
@@ -73,12 +93,15 @@ const CardTable = (props: { cards: Card[]; action: string }) => {
                 <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
                     <Modal.Header>{props.action === 'sell' ? 'Vendre la carte' : 'Acheter la carte'}</Modal.Header>
                     <Modal.Content>
-                        <input
+                        <Input
                             type="number"
                             placeholder="Entrez le prix"
                             value={price}
                             onChange={(e) => setPrice(e.target.value)}
+                            error={!!priceError}
+                            readOnly={props.action === 'buy'}
                         />
+                        {priceError && <div style={{color: 'red', marginTop: '10px'}}>{priceError}</div>}
                     </Modal.Content>
                     <Modal.Actions>
                         <Button onClick={handlePriceSubmit}>Soumettre</Button>

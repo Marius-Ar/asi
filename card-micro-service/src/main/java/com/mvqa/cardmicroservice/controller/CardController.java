@@ -59,4 +59,10 @@ public class CardController {
     public CardDTO addCardToUser(@PathVariable Long id, @RequestBody UUID buyerId) {
         return cardMapper.toDto(cardService.addCardToUser(id, buyerId));
     }
+
+    @PostMapping("/cardsByIds")
+    public List<CardDTO> getCardsByIds(@RequestBody List<Long> cardIds) {
+        Iterable<Card> cards = cardService.getCardsByIds(cardIds);
+        return cardMapper.toDtos(cards);
+    }
 }

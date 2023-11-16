@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {AppState} from "../../../store/store";
 import {useDispatch, useSelector} from "react-redux";
 import {setUserDetails} from "../../../store/userDetailReducer";
+import {Link} from "react-router-dom";
 
 export function Header() {
     const dispatch = useDispatch();
@@ -30,7 +31,6 @@ export function Header() {
     }, [isAuthenticated, userId, dispatch]);
     const handleLogout = () => {
         dispatch({type: 'SET_AUTH', payload: {isAuthenticated: false, userId: null}});
-        localStorage.removeItem('auth');
         document.cookie = 'userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     };
 
@@ -56,19 +56,19 @@ export function Header() {
             <h3 className="ui left floated header">
                 <i className="money icon"></i>
                 <div className="content">
-                    <div className="sub header"><a href="/market"> Market</a></div>
+                    <div className="sub header"><Link to={"market"}> Market</Link></div>
                 </div>
             </h3>
             <h3 className="ui left floated header">
                 <i className="book icon"></i>
                 <div className="content">
-                    <div className="sub header"><a href="/user-card">My Cards</a></div>
+                    <div className="sub header"><Link to={"/user-card"}>My Cards</Link></div>
                 </div>
             </h3>
             <h3 className="ui left floated header">
                 <i className="gamepad icon"></i>
                 <div className="content">
-                    <div className="sub header"><a href="/game/join">Game</a> </div>
+                    <div className="sub header"><Link to={"/game/join"}>Game</Link></div>
                 </div>
             </h3>
         </header>

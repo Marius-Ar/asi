@@ -4,9 +4,9 @@ import com.mvqa.cardmicroservice.model.Card;
 import com.mvqa.cardmicroservice.model.UserCard;
 import com.mvqa.cardmicroservice.repository.CardRepository;
 import com.mvqa.cardmicroservice.repository.UserCardRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -16,10 +16,13 @@ public class CardService {
     private final CardRepository cardRepository;
     private final UserCardRepository userCardRepository;
 
-
     public CardService(CardRepository cardRepository, UserCardRepository userCardRepository) {
         this.cardRepository = cardRepository;
         this.userCardRepository = userCardRepository;
+    }
+
+    public Iterable<Card> getCardsByIds(List<Long> cardIds) {
+        return cardRepository.findAllById(cardIds);
     }
 
     public Card getCard(long id) {
@@ -42,17 +45,32 @@ public class CardService {
 
     }
 
-    @Transactional
     public Card sellCard(UUID userId, Long cardId) {
-        Card card = cardRepository.findById(cardId).orElseThrow(() -> new RuntimeException("Card not found"));
-        card.getUserCards().removeIf(userCard -> userCard.getUserId().equals(userId));
-        return cardRepository.save(card);
+        System.out.println(userId);
+
+        List<UserCard> userCards = userCardRepository.findByUserId(userId);
+        System.out.println(userCards.size());
+        for (UserCard userCard : userCards) {
+            if (userCard.getCard().getId().equals(cardId)) {
+                userCardRepository.delete(userCard);
+                return userCard.getCard();
+            }
+        }
+        return null;
+    }
+
+    public List<Card> getRandomCards(int numberOfCards) {
+        List<Card> allCards = getAll();
+        Collections.shuffle(allCards);
+        return allCards.stream().limit(numberOfCards).collect(Collectors.toList());
     }
 
     public boolean registerUserCards(UUID userId) {
         if (findUserCards(userId).isEmpty()) {
-            for (long i = 1; i < 6; i++) {
-                addCardToUser(i, userId);
+            List<Card> randomCards = getRandomCards(5);
+            for (Card card : randomCards) {
+                card.addUserCard(new UserCard(userId, card));
+                cardRepository.save(card);
             }
             return true;
         }

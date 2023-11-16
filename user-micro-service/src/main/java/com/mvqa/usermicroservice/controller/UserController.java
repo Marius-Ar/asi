@@ -65,7 +65,11 @@ public class UserController {
 
 
     @PostMapping("/{id}/balance")
-    public UserDTO updateUserBalance(@PathVariable UUID id, @RequestBody Double amount) {
-        return userMapper.toDto(userService.updateUserBalance(id, amount));
+    public ResponseEntity<?> updateUserBalance(@PathVariable UUID id, @RequestBody Double amount) {
+        try {
+            return ResponseEntity.ok(userMapper.toDto(userService.updateUserBalance(id, amount)));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

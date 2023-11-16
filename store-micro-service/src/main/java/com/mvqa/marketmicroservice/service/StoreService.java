@@ -5,7 +5,9 @@ import com.mvqa.marketmicroservice.repository.StoreListingRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class StoreService {
@@ -27,38 +29,18 @@ public class StoreService {
         return storeListingRepository.findAllBySellDateNull();
     }
 
+    public List<Long> getCardIdFromStoreListing(List<StoreListing> storeListing) {
+        return storeListing.stream().map(StoreListing::getCardId).toList();
+    }
+
     public StoreListing findOneById(long id) {
         return storeListingRepository.findById(id).orElseThrow();
     }
 
-/*
-    public StoreListing buyCard(long id, UUID buyerId) {
-        StoreListing cardListing = storeListingRepository.findById(id).orElseThrow();
-        if (Objects.equals(buyerId, cardListing.getSellerId())) {
-            throw new IllegalArgumentException("L'acheteur ne peut pas être le vendeur");
-        }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.COOKIE, "userId=" + 1);
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
-
-        HttpEntity<Double> entity = new HttpEntity<>(-cardListing.getPrice(), headers);
-        //Màj de la balance de l'acheteur et du vendeur
-        restTemplate.exchange("http://user-service/user/" + buyerId + "/balance", HttpMethod.POST, entity, UserDTO.class);
-
-        entity = new HttpEntity<>(cardListing.getPrice(), headers);
-        restTemplate.exchange("http://user-service/user/" + cardListing.getSellerId() + "/balance", HttpMethod.POST, entity, UserDTO.class);
-
-        System.out.println("Balance ok");
-
-        HttpEntity<Long> entity2 = new HttpEntity<>(buyerId, headers);
-        //Ajouter card au buyer si les appels précédents ont fonctionné
-        restTemplate.exchange("http://card-service/card/add/" + cardListing.getCardId(), HttpMethod.POST, entity2, Object.class);
-
-        // Update listing
-        storeListingRepository.save(cardListing.setBuyerId(buyerId).setSellDate(LocalDate.now()));
-        return cardListing;
+    public StoreListing boughtCard(StoreListing cardListing, UUID buyerId) {
+        return storeListingRepository.save(cardListing.setBuyerId(buyerId).setSellDate(LocalDate.now()));
     }
-*/
+
 
 }

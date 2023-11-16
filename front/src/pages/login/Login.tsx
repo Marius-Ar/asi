@@ -38,7 +38,6 @@ export function Login() {
             });
             if (response.ok) {
                 const userId = await response.text();
-                localStorage.setItem('auth', JSON.stringify({isAuthenticated: true, userId}));
                 dispatch({type: 'SET_AUTH', payload: {isAuthenticated: true, userId}});
                 navigate('/market');
                 showNotification(NotificationType.SUCCESS, "Connexion réussie");

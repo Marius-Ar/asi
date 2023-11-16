@@ -15,13 +15,15 @@ export const CardList: React.FC = () => {
                 .catch(error => console.error('Error fetching cards:', error));
         }
     }, [userId]);
-
+    const removeCardFromList = (cardId: number) => {
+        setCards(prevCards => prevCards.filter(card => card.id !== cardId));
+    };
 
     return (
         <div className="ui container">
             <div className="ui ten wide column">
                 <h3 className="ui aligned header">My Card List</h3>
-                <CardTable cards={cards} action={'sell'}/>
+                <CardTable cards={cards} action={'sell'} onCardRemoved={removeCardFromList}/>
             </div>
         </div>
     );

@@ -11,7 +11,7 @@ import java.util.List;
 
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
-    private final List<String> uriList = List.of("/user", "/card/user", "/card/user/register", "/register", "/error", "/user/register", "/user/login", "/login", "/css/.*", "/js/.*");
+    private final List<String> uriList = List.of("store/buy", "/store/listing", "/store/sell", "/card/user", "/card/user/register", "/register", "/error", "/user/register", "/user/login", "/login", "/css/.*", "/js/.*");
 
     public LoginInterceptor() {
         super();

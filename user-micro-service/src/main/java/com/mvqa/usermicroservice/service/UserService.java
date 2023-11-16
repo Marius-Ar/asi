@@ -54,7 +54,7 @@ public class UserService {
 
         double newBalance = user.getBalance() + amount;
         if (newBalance < 0) {
-            throw new IllegalArgumentException("L'acheteur n'a pas assez de fric");
+            throw new IllegalArgumentException("Vous n'avez pas assez d'argent.");
         }
 
         user.setBalance(newBalance);
