@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {AppState} from "../../../store/store";
 import {useDispatch, useSelector} from "react-redux";
+import {useNotificationWebsocket} from "../notification/NotificationWebsocket";
 import {setUserDetails} from "../../../store/userDetailReducer";
 import {Link} from "react-router-dom";
 
@@ -33,6 +34,8 @@ export function Header() {
         dispatch({type: 'SET_AUTH', payload: {isAuthenticated: false, userId: null}});
         document.cookie = 'userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     };
+
+    useNotificationWebsocket();
 
     if (!isAuthenticated) {
         return null;
