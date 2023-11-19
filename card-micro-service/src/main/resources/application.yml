@@ -1,5 +1,9 @@
 server.port: ${SERVER_PORT}
+NOTIFICATION_QUEUE_NAME: queue.notifications
 spring:
+  activemq:
+    packages:
+      trust-all: true
   main:
     allow-bean-definition-overriding: true
   jpa:

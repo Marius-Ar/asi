@@ -42,10 +42,15 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegisterDTO userRegisterDTO, @CookieValue(name = "notificationSessionId") UUID notificationSessionId) {
         try {
-            User user = userService.saveUser(userRegisterDTO, notificationSessionId);
+            userService.saveUser(userRegisterDTO, notificationSessionId);
+            //Obligé de faire ça à cause de l'ESB car je ne peux pas récupérer l'UUID auto généré en bdd
+            Thread.sleep(3000);
+            User user = userService.findByMail(userRegisterDTO.getEmail());
             httpClient.addCardsToRegisteredUser(user.getId());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
         return ResponseEntity.ok("Utilisateur enregistré avec succès");
 

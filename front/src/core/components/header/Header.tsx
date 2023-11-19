@@ -13,7 +13,7 @@ export function Header() {
     const userApiUri = process.env.REACT_APP_API_USER_URI;
 
     useEffect(() => {
-        if (isAuthenticated && userId && !userDetails) {
+        if (isAuthenticated && userId) {
             const storedUserDetails = localStorage.getItem('userDetails');
             if (storedUserDetails) {
                 dispatch(setUserDetails(JSON.parse(storedUserDetails)));
@@ -24,13 +24,14 @@ export function Header() {
                     .then(response => response.json())
                     .then(userDetailsJson => {
                         localStorage.setItem('userDetails', JSON.stringify(userDetailsJson));
-                        localStorage.removeItem('userDetails');
                         dispatch(setUserDetails(userDetailsJson));
                     });
             }
         }
     }, [isAuthenticated, userId, dispatch]);
     const handleLogout = () => {
+        localStorage.removeItem('userDetails');
+        dispatch({type: 'SET_USER_DETAILS', payload: {userDetails: null}});
         dispatch({type: 'SET_AUTH', payload: {isAuthenticated: false, userId: null}});
         document.cookie = 'userId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     };

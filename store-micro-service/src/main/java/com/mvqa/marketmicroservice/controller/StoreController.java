@@ -42,9 +42,10 @@ public class StoreController {
     }
 
     @PostMapping("/sell")
-    public ResponseEntity<?> sellCard(@RequestBody CardSellDTO cardSellDTO, @CookieValue(name = "userId") UUID userId) {
+    public ResponseEntity<?> sellCard(@RequestBody CardSellDTO cardSellDTO, @CookieValue(name = "userId") UUID userId, @CookieValue(name = "notificationSessionId") UUID notificationSessionId) {
         try {
-            return ResponseEntity.ok(storeService.postStoreListing(httpClient.sellCard(cardSellDTO, userId)));
+            httpClient.sellCard(cardSellDTO, userId, notificationSessionId);
+            return ResponseEntity.ok(storeService.postStoreListing(userId, cardSellDTO, notificationSessionId));
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
@@ -52,10 +53,12 @@ public class StoreController {
 
 
     @PostMapping("/buy/{listingId}")
-    public ResponseEntity<?> buyCard(@PathVariable Long listingId, @CookieValue(name = "userId") UUID userId) {
+    public ResponseEntity<?> buyCard(@PathVariable Long listingId, @CookieValue(name = "userId") UUID userId, @CookieValue(name = "notificationSessionId") UUID notificationSessionId) {
         try {
-            StoreListing cardListing = this.httpClient.buyCard(this.storeService.findOneById(listingId), userId);
-            return ResponseEntity.ok(storeService.boughtCard(cardListing, userId));
+            StoreListing cardListing = storeService.findOneById(listingId);
+            this.httpClient.buyCard(cardListing, userId, notificationSessionId);
+            storeService.boughtCard(cardListing, notificationSessionId, userId);
+            return ResponseEntity.ok("Transaction is being processed");
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }

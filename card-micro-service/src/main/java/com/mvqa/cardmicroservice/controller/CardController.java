@@ -4,6 +4,7 @@ import com.mvqa.cardmicroservice.mapper.CardMapper;
 import com.mvqa.cardmicroservice.model.Card;
 import com.mvqa.cardmicroservice.service.CardService;
 import com.mvqa.common.dto.CardDTO;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,15 +50,24 @@ public class CardController {
         }
     }
 
-
     @PostMapping("/sell/{id}")
-    public CardDTO sellCard(@CookieValue(name = "userId") UUID userId, @PathVariable Long id) {
-        return cardMapper.toDto(cardService.sellCard(userId, id));
+    public ResponseEntity<?> sellCard(@CookieValue(name = "userId") UUID userId, @CookieValue(name = "notificationSessionId") UUID notificationSessionId, @PathVariable Long id) {
+        try {
+            cardService.sellCard(userId, id, notificationSessionId);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok().body("Card is being sold");
     }
 
     @PostMapping("/add/{id}")
-    public CardDTO addCardToUser(@PathVariable Long id, @RequestBody UUID buyerId) {
-        return cardMapper.toDto(cardService.addCardToUser(id, buyerId));
+    public ResponseEntity<?> addCardToUser(@PathVariable Long id, @RequestBody UUID buyerId, @CookieValue(name = "notificationSessionId") UUID notificationSessionId) {
+        try {
+            cardService.addCardToUser(id, buyerId, notificationSessionId);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok().body("Card is being added");
     }
 
     @PostMapping("/cardsByIds")

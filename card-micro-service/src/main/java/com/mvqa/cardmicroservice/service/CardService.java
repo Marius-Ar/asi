@@ -4,6 +4,8 @@ import com.mvqa.cardmicroservice.model.Card;
 import com.mvqa.cardmicroservice.model.UserCard;
 import com.mvqa.cardmicroservice.repository.CardRepository;
 import com.mvqa.cardmicroservice.repository.UserCardRepository;
+import com.mvqa.common.dto.UserCardNotificationDto;
+import com.mvqa.common.queue.QueueClient;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -15,10 +17,14 @@ import java.util.stream.Collectors;
 public class CardService {
     private final CardRepository cardRepository;
     private final UserCardRepository userCardRepository;
+    private QueueClient queueClient;
 
-    public CardService(CardRepository cardRepository, UserCardRepository userCardRepository) {
+
+    public CardService(CardRepository cardRepository, UserCardRepository userCardRepository, QueueClient queueClient) {
         this.cardRepository = cardRepository;
         this.userCardRepository = userCardRepository;
+        this.queueClient = queueClient;
+
     }
 
     public Iterable<Card> getCardsByIds(List<Long> cardIds) {
@@ -38,25 +44,15 @@ public class CardService {
     }
 
 
-    public Card addCardToUser(Long cardId, UUID userId) {
-        Card card = cardRepository.findById(cardId).orElseThrow(() -> new RuntimeException("Card not found"));
-        card.addUserCard(new UserCard(userId, card));
-        return cardRepository.save(card);
+    public void addCardToUser(Long cardId, UUID userId, UUID notificationSessionId) {
+        queueClient.setQueue("cardBuyingQueue");
+        queueClient.sendMessage(new UserCardNotificationDto(userId, notificationSessionId, cardId));
 
     }
 
-    public Card sellCard(UUID userId, Long cardId) {
-        System.out.println(userId);
-
-        List<UserCard> userCards = userCardRepository.findByUserId(userId);
-        System.out.println(userCards.size());
-        for (UserCard userCard : userCards) {
-            if (userCard.getCard().getId().equals(cardId)) {
-                userCardRepository.delete(userCard);
-                return userCard.getCard();
-            }
-        }
-        return null;
+    public void sellCard(UUID userId, Long cardId, UUID notificationSessionId) {
+        queueClient.setQueue("cardSellQueue");
+        queueClient.sendMessage(new UserCardNotificationDto(userId, notificationSessionId, cardId));
     }
 
     public List<Card> getRandomCards(int numberOfCards) {

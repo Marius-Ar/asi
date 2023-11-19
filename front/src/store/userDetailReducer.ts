@@ -11,20 +11,25 @@ const initialState: UserState = {
     isLoaded: false
 };
 
-const userDetails = createSlice({
+const userDetailsSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        setUserDetails: (state: any, action: PayloadAction<UserDetails>) => {
+        setUserDetails: (state, action: PayloadAction<UserDetails>) => {
             state.userDetails = action.payload;
             state.isLoaded = true;
         },
-        clearUserDetails: (state: any) => {
+        clearUserDetails: (state) => {
             state.userDetails = null;
             state.isLoaded = false;
+        },
+        adjustUserBalance: (state, action: PayloadAction<number>) => {
+            if (state.userDetails) {
+                state.userDetails.balance += action.payload;
+            }
         }
     }
 });
 
-export const {setUserDetails, clearUserDetails} = userDetails.actions;
-export default userDetails.reducer;
+export const {setUserDetails, clearUserDetails, adjustUserBalance} = userDetailsSlice.actions;
+export default userDetailsSlice.reducer;

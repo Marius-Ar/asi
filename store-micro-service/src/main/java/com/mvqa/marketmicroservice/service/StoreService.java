@@ -1,9 +1,12 @@
 package com.mvqa.marketmicroservice.service;
 
+import com.mvqa.common.dto.CardSellDTO;
+import com.mvqa.common.queue.QueueClient;
+import com.mvqa.marketmicroservice.dto.StoreBoughtNotificationDto;
+import com.mvqa.marketmicroservice.dto.StoreNotificationDto;
 import com.mvqa.marketmicroservice.model.StoreListing;
 import com.mvqa.marketmicroservice.repository.StoreListingRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,16 +16,24 @@ import java.util.UUID;
 public class StoreService {
 
     private final StoreListingRepository storeListingRepository;
-    private final RestTemplate restTemplate;
 
+    private QueueClient queueClient;
 
-    public StoreService(StoreListingRepository storeListingRepository) {
+    public StoreService(StoreListingRepository storeListingRepository, QueueClient queueClient) {
         this.storeListingRepository = storeListingRepository;
-        this.restTemplate = new RestTemplate();
+        this.queueClient = queueClient;
     }
 
-    public StoreListing postStoreListing(StoreListing card) {
-        return storeListingRepository.save(card);
+    public StoreListing postStoreListing(UUID sellerId, CardSellDTO card, UUID notificationSessionId) {
+        StoreListing storeListing = new StoreListing()
+                .setCardId(card.id())
+                .setDate(LocalDate.now())
+                .setSellerId(sellerId)
+                .setPrice(card.price()
+                );
+        queueClient.setQueue("storeListingCreationQueue");
+        queueClient.sendMessage(new StoreNotificationDto(storeListing, notificationSessionId));
+        return storeListing;
     }
 
     public List<StoreListing> findAllActive() {
@@ -38,8 +49,9 @@ public class StoreService {
     }
 
 
-    public StoreListing boughtCard(StoreListing cardListing, UUID buyerId) {
-        return storeListingRepository.save(cardListing.setBuyerId(buyerId).setSellDate(LocalDate.now()));
+    public void boughtCard(StoreListing cardListing, UUID notificationSessionId, UUID buyerId) {
+        queueClient.setQueue("storeListingBoughtQueue");
+        queueClient.sendMessage(new StoreBoughtNotificationDto(cardListing, notificationSessionId, buyerId));
     }
 
 

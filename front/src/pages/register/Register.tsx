@@ -2,6 +2,7 @@ import React, {ChangeEvent, FormEvent, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useNotification} from "../../core/components/notification/NotificationContext";
 import {Button, Card, Grid} from "semantic-ui-react";
+import {NotificationType} from "../../core/components/notification/Notification";
 
 export function Register() {
     const {showNotification} = useNotification();
@@ -44,6 +45,7 @@ export function Register() {
             });
 
             if (response.ok) {
+                showNotification(NotificationType.SUCCESS, 'Vos cartes ont été ajoutées à votre compte.');
                 navigate('/login');
             } else {
                 const errorText = await response.text();

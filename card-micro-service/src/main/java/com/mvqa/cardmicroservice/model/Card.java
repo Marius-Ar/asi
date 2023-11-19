@@ -39,7 +39,7 @@ public class Card {
 
     @Column(name = "image_url")
     private String imageUrl;
-    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<UserCard> userCards;
 
     public Card() {

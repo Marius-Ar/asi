@@ -2,12 +2,13 @@ package com.mvqa.marketmicroservice.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
 @Table(name = "store_listing")
-public class StoreListing {
+public class StoreListing implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

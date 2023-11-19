@@ -45,9 +45,10 @@ export default class ApiStore {
             credentials: 'include',
         })
         if (!response.ok) {
-
-            throw new Error('Failed to fetch user cards');
+            const text = await response.text();
+            console.log("Response text:", text);
+            throw new Error(text || 'Failed to buy card');
         }
-        return response.json();
+        return response.text();
     }
 }

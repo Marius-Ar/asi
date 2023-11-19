@@ -2,8 +2,11 @@ import React, {useState} from 'react';
 import {Card} from "../../interfaces/card.interface";
 import ApiStore from "../../api/ApiStore";
 import {Button, Input, Modal} from "semantic-ui-react";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {AppState} from "../../../store/store";
+import {useNotification} from "../notification/NotificationContext";
+import {NotificationType} from "../notification/Notification";
+import {adjustUserBalance} from "../../../store/userDetailReducer";
 
 const CardTable = (props: { cards: Card[]; action: string, onCardRemoved: (cardId: number) => void }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -11,6 +14,8 @@ const CardTable = (props: { cards: Card[]; action: string, onCardRemoved: (cardI
     const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
     const [priceError, setPriceError] = useState<string | null>(null);
     const userId = useSelector((state: AppState) => state.auth.userId);
+    const {showNotification} = useNotification();
+    const dispatch = useDispatch();
 
     const openModal = (cardId: number) => {
         const selectedCard = props.cards.find(card => card.id === cardId);
@@ -29,13 +34,22 @@ const CardTable = (props: { cards: Card[]; action: string, onCardRemoved: (cardI
                 try {
                     if (props.action === 'sell') {
                         await ApiStore.sellCard({id: selectedCardId, price: parseFloat(price)});
+                        props.onCardRemoved(selectedCardId);
+
                     } else {
                         const selectedCard = props.cards.find(card => card.id === selectedCardId);
                         if (selectedCard && selectedCard.storeListingId) {
-                            await ApiStore.buyCard(selectedCard.storeListingId);
+                            try {
+                                await ApiStore.buyCard(selectedCard.storeListingId)
+                                dispatch(adjustUserBalance(-parsedPrice));
+                                props.onCardRemoved(selectedCardId);
+
+                            } catch (error: any) {
+                                console.error('Error during the transaction:', error);
+                                showNotification(NotificationType.ERROR, error.message);
+                            }
                         }
                     }
-                    props.onCardRemoved(selectedCardId);
                     setIsModalOpen(false);
                     setPrice('');
                 } catch (error) {
