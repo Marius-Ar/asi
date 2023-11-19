@@ -2,6 +2,7 @@ package com.mvqa.notificationmicroservice.websocket;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.*;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -15,7 +16,7 @@ public class SocketHandler implements WebSocketHandler {
         log.info("Connection established on session {}", session.getId());
         // Ajouter la session à la liste des sessions actives.
         sessions.put(session.getId(), session);
-        session.sendMessage(new TextMessage(session.getId()));
+        session.sendMessage(new TextMessage("init_session" + ';' + session.getId()));
     }
 
     @Override

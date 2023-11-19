@@ -1,5 +1,9 @@
 server.port: ${SERVER_PORT}
+
 spring:
+  activemq:
+    packages:
+      trust-all: true
   main:
     allow-bean-definition-overriding: true
   jpa:

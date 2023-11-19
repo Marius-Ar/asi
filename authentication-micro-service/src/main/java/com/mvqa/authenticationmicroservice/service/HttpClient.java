@@ -2,7 +2,6 @@ package com.mvqa.authenticationmicroservice.service;
 
 import com.mvqa.common.dto.UserDTO;
 import com.mvqa.common.dto.UserRegisterDTO;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -11,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
+
 @Service
 public class HttpClient {
 
@@ -28,7 +28,7 @@ public class HttpClient {
         try {
             response = restTemplate.exchange(userApiUri.concat("/login"), HttpMethod.POST, entity, UUID.class);
         } catch (HttpClientErrorException e) {
-            throw new ResponseStatusException( e.getStatusCode(), e.getResponseBodyAsString());
+            throw new ResponseStatusException(e.getStatusCode(), e.getResponseBodyAsString());
         }
 
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
@@ -38,9 +38,10 @@ public class HttpClient {
         }
     }
 
-    public void registerUser(UserRegisterDTO userRegisterDTO) {
+    public void registerUser(UserRegisterDTO userRegisterDTO, UUID notificationSessionId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add(HttpHeaders.COOKIE, "notificationSessionId=" + notificationSessionId);
         HttpEntity<UserRegisterDTO> request = new HttpEntity<>(userRegisterDTO, headers);
 
         try {

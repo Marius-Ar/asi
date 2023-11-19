@@ -1,7 +1,7 @@
 import React, {ChangeEvent, FormEvent, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {NotificationType} from "../../core/components/notification/Notification";
+import {Link, useNavigate} from 'react-router-dom';
 import {useNotification} from "../../core/components/notification/NotificationContext";
+import {Button, Card, Grid} from "semantic-ui-react";
 
 export function Register() {
     const {showNotification} = useNotification();
@@ -39,12 +39,12 @@ export function Register() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify(formData),
             });
 
             if (response.ok) {
                 navigate('/login');
-                showNotification(NotificationType.SUCCESS, "Création réussie mais n'oublie pas que tu es nul Alex.");
             } else {
                 const errorText = await response.text();
                 setErrorMessage('Erreur lors de l\'inscription: ' + errorText);
@@ -56,34 +56,46 @@ export function Register() {
         }
     };
     return (
-        <div className="ui container" style={{margin: '10%'}}>
-            <h2 className="ui header">Inscription</h2>
-            <form className="ui form" id="register-form" onSubmit={handleSubmit}>
-                <div className="field">
-                    <label>Nom d'utilisateur</label>
-                    <input type="text" name="username" placeholder="Nom d'utilisateur" required
-                           onChange={handleInputChange}/>
-                </div>
-                <div className="field">
-                    <label>Email</label>
-                    <input type="email" name="email" placeholder="Email" required onChange={handleInputChange}/>
-                </div>
-                <div className="field">
-                    <label>Mot de passe</label>
-                    <input type="password" name="password" placeholder="Mot de passe" required
-                           onChange={handleInputChange}/>
-                </div>
-                <div className="field">
-                    <label>Confirmation du mot de passe</label>
-                    <input type="password" name="passwordConfirmation" placeholder="Confirmation du mot de passe"
-                           required onChange={handleInputChange}/>
-                </div>
-                <div className="field">
-                    <p id="error-message" className="ui red message"
-                       style={{display: errorMessage ? '' : 'none'}}>{errorMessage}</p>
-                </div>
-                <button className="ui button" type="submit">Inscription</button>
-            </form>
-        </div>
+        <Grid centered style={{height: '100vh'}} verticalAlign="middle">
+            <Grid.Column style={{maxWidth: 450}}>
+                <Card fluid>
+                    <Card.Content>
+                        <Link to="/login">
+                            <Button className={"blue"} icon=" arrow left" content="Retour au login"/>
+                        </Link>
+                        <Card.Header style={{marginTop: '1em'}}>Inscription</Card.Header>
+                        <form className="ui form" id="register-form" onSubmit={handleSubmit}>
+                            <div className="field">
+                                <label>Nom d'utilisateur</label>
+                                <input type="text" name="username" placeholder="Nom d'utilisateur" required
+                                       onChange={handleInputChange}/>
+                            </div>
+                            <div className="field">
+                                <label>Email</label>
+                                <input type="email" name="email" placeholder="Email" required
+                                       onChange={handleInputChange}/>
+                            </div>
+                            <div className="field">
+                                <label>Mot de passe</label>
+                                <input type="password" name="password" placeholder="Mot de passe" required
+                                       onChange={handleInputChange}/>
+                            </div>
+                            <div className="field">
+                                <label>Confirmation du mot de passe</label>
+                                <input type="password" name="passwordConfirmation"
+                                       placeholder="Confirmation du mot de passe"
+                                       required onChange={handleInputChange}/>
+                            </div>
+                            <div className="field">
+                                <p id="error-message" className="ui red message"
+                                   style={{display: errorMessage ? '' : 'none'}}>{errorMessage}</p>
+                            </div>
+                            <button className="ui button teal" type="submit">Inscription</button>
+                        </form>
+                    </Card.Content>
+                </Card>
+            </Grid.Column>
+        </Grid>
+
     );
 }

@@ -40,9 +40,9 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserRegisterDTO userRegisterDTO) {
+    public ResponseEntity<?> registerUser(@RequestBody UserRegisterDTO userRegisterDTO, @CookieValue(name = "notificationSessionId") UUID notificationSessionId) {
         try {
-            User user = userService.saveUser(userRegisterDTO);
+            User user = userService.saveUser(userRegisterDTO, notificationSessionId);
             httpClient.addCardsToRegisteredUser(user.getId());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

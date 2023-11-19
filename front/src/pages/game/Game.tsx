@@ -1,13 +1,10 @@
 import React from "react";
-import {GameChat} from "./GameChat";
-import CardDetail from "../../core/components/card-detail/CardDetail";
-import CardShort from "../../core/components/card-short/CardShort";
 
-export function Game(){
+export function Game() {
     const actionpoints = 100;
     return (
         <div>
-            <GameChat/>
+            {/*<GameChat/>
             <div className="ui segment">
                 <div className="ui grid">
                     <div className="sixteen wide column">
@@ -116,7 +113,7 @@ export function Game(){
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>*/}
         </div>
 
 

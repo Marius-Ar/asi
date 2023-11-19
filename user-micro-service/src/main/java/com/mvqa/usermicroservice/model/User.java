@@ -1,6 +1,7 @@
 package com.mvqa.usermicroservice.model;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 
 import javax.validation.constraints.NotNull;
@@ -28,19 +29,21 @@ public class User {
     @Column(name = "balance")
     private Double balance;
 
-    @PrePersist
-    public void initializeUUID() {
-        if (id == null) {
-            id = UUID.randomUUID();
-        }
-    }
     public User() {
-        }
+    }
+
     public User(@NotNull String username, @NotNull String mail, @NotNull String password) {
         this.username = username;
         this.mail = mail;
         this.password = password;
         this.balance = 500.0;
+    }
+
+    @PrePersist
+    public void initializeUUID() {
+        if (id == null) {
+            id = UUID.randomUUID();
+        }
     }
 
     public UUID getId() {
@@ -86,5 +89,14 @@ public class User {
     public User setBalance(Double balance) {
         this.balance = balance;
         return this;
+    }
+
+    public String toJson() {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (Exception e) {
+            throw new RuntimeException("Error converting user to json", e);
+        }
     }
 }

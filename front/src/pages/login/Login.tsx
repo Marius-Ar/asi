@@ -2,7 +2,7 @@ import React, {FormEvent, useEffect, useState} from 'react';
 import {NotificationType} from "../../core/components/notification/Notification";
 import {useNotification} from "../../core/components/notification/NotificationContext";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {AppState} from "../../store/store";
 
 export function Login() {
@@ -94,7 +94,7 @@ export function Login() {
                 </form>
 
                 <div className="ui message">
-                    Nouveau ? <a href="/register">Inscrivez-vous</a>
+                    Nouveau ? <Link to={"/register"}>Inscrivez-vous</Link>
                 </div>
             </div>
         </div>

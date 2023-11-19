@@ -8,6 +8,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import static java.util.UUID.randomUUID;
+
 @Component
 public class DataGenerator implements ApplicationRunner {
 
@@ -22,9 +24,9 @@ public class DataGenerator implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
 
-        User user1 = userService.saveUser(new UserRegisterDTO("test@test.test", "password", "password", "Axel Perraud"));
+        User user1 = userService.saveUser(new UserRegisterDTO("test@test.test", "password", "password", "Axel Perraud"), randomUUID());
         httpClient.addCardsToRegisteredUser(user1.getId());
-        User user2 = userService.saveUser(new UserRegisterDTO("example@example.example", "password", "password", "example"));
+        User user2 = userService.saveUser(new UserRegisterDTO("example@example.example", "password", "password", "example"), randomUUID());
         httpClient.addCardsToRegisteredUser(user2.getId());
 
     }

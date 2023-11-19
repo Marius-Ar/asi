@@ -10,10 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
@@ -62,9 +59,9 @@ public class AuthenticationController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserRegisterDTO userRegisterDTO) {
+    public ResponseEntity<?> register(@RequestBody UserRegisterDTO userRegisterDTO, @CookieValue(name = "notificationSessionId") UUID notificationSessionId) {
         try {
-            httpClient.registerUser(userRegisterDTO);
+            httpClient.registerUser(userRegisterDTO, notificationSessionId);
             return ResponseEntity.ok("Inscription réussie");
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
