@@ -6,6 +6,7 @@ export default class Room {
     constructor(id: string, firstPlayerId: string, secondPlayerId: string | null = null) {
         this._id = id;
         this._firstPlayerId = firstPlayerId;
+        this._secondPlayerId = secondPlayerId;
     }
 
     public isFull(): boolean {

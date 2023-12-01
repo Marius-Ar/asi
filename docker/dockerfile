@@ -1,3 +1,9 @@
 FROM openjdk:17-jdk-slim
-COPY ./target/*.jar /usr/local/lib/app.jar
-ENTRYPOINT ["java","-jar","/usr/local/lib/app.jar", "--spring.profiles.active=docker"]
+
+ARG PROJECT_NAME
+
+WORKDIR /usr/local/lib/
+
+COPY ./common/target/*.jar ./app.jar
+COPY ./${PROJECT_NAME}/target/classes .
+ENTRYPOINT ["java","-jar","/usr/local/lib/app.jar", "--spring.profiles.active=docker", "--classpath /usr/local/lib/classes"]
