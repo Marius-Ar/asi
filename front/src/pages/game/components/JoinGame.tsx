@@ -9,10 +9,16 @@ export function JoinGame() {
     let clickedJoined = false;
     const [joinedRoom, setJoinedRoom] = useState<Room | null>(null);
 
+    const START_DELAY = 3000;
+
     socket.on('joined', ({id, firstPlayerId, secondPlayerId}) => {
         const room = new Room(id, firstPlayerId, secondPlayerId);
         setJoinedRoom(room);
-        console.log(room.isFull())
+        if (room.isFull()) {
+            setTimeout(() => {
+                window.location.href = '/game/choose';
+            }, START_DELAY);
+        }
     });
 
     const joinGame = () => {
@@ -46,7 +52,7 @@ export function JoinGame() {
                     </tbody>
                 </table>}
                 {joinedRoom !== null && joinedRoom.firstPlayerId && joinedRoom.secondPlayerId &&
-                    <p>Game is full!<br/>Starting in 3 seconds</p>}
+                    <p>Game is full!<br/>Starting in {START_DELAY / 1000} seconds</p>}
             </div>
         </div>
     );

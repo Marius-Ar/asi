@@ -8,11 +8,11 @@ import store from "./store/store";
 import {Header} from "./core/components/header/Header"
 import {Register} from "./pages/register/Register";
 import ProtectedRoute from "./core/components/protected-route/ProtectedRoute";
-import {CardList} from "./pages/user-card/user-card";
 import {Market} from "./pages/market/Market";
 import {Login} from "./pages/login/Login";
-import gameRoutes from "./pages/game/game.routes";
-
+import {CardList} from './pages/user-card/UserCard';
+import {JoinGame} from './pages/game/components/JoinGame';
+import {ChooseCards} from './pages/game/components/ChooseCards';
 
 ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -23,18 +23,21 @@ ReactDOM.createRoot(
                 <Header/>
                 <Routes>
                     <Route path="/" element={<Navigate replace to="/market"/>}/>
-                    <Route path="/login" element={<Login/>}/>
-                    <Route path="/register" element={<Register/>}/>
-                    <Route path="/market" element={<ProtectedRoute>
-                        <Market/>
-                    </ProtectedRoute>}/>
-                    <Route path="/user-card" element={<ProtectedRoute>
-                        <CardList/>
-                    </ProtectedRoute>}/>
-                    <Route path={gameRoutes.children[0].path} element={gameRoutes.children[0].element}/>
+                    <Route path="/login" element={protectRoute(<Login/>)}/>
+                    <Route path="/register" element={protectRoute(<Register/>)}/>
+                    <Route path="/market" element={protectRoute(<Market/>)}/>
+                    <Route path="/user-card" element={protectRoute(<CardList/>)}/>
 
+                    <Route path="/game">
+                        <Route path="join" element={protectRoute(<JoinGame/>)} />
+                        <Route path="choose" element={protectRoute(<ChooseCards/>)} />
+                    </Route>
                 </Routes>
             </BrowserRouter>
         </NotificationProvider>
     </Provider>
 );
+
+function protectRoute(element: JSX.Element) {
+    return <ProtectedRoute>{element}</ProtectedRoute>;
+}

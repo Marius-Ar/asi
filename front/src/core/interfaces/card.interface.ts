@@ -12,6 +12,4 @@ export interface Card {
     imageUrl: string;
     price?: number;
     sellerId?: UUID;
-
-
 }

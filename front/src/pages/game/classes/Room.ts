@@ -10,7 +10,7 @@ export default class Room {
     }
 
     public isFull(): boolean {
-        return !this._firstPlayerId && !this._secondPlayerId;
+        return !!this._firstPlayerId && !!this._secondPlayerId;
     }
 
     set id(value: string) {

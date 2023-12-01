@@ -12,7 +12,6 @@ const initialState = {
     isAuthenticated: getUserIdFromCookie() !== null,
     userId: getUserIdFromCookie(),
     notificationSession: notificationSessionReducer
-
 };
 
 const rootReducer = combineReducers({
