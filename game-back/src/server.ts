@@ -8,7 +8,7 @@ const {PORT = 3001} = process.env;
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
-    cors: {
+    cors: { // Todo : remove this in production
         origin: 'http://localhost:3000',
     },
 });
@@ -18,7 +18,7 @@ io.on('connection', socket => {
         const usersRoom = onUserJoinRoom(userId);
         const roomId = usersRoom.id;
         socket.join(roomId);
-        socket.to(roomId).emit('joined', usersRoom);
+        io.to(roomId).emit('joined', usersRoom.toJsonObject());
     });
 });
 

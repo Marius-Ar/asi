@@ -8,12 +8,12 @@ export default class Room {
         this._firstPlayerId = firstPlayerId;
     }
 
-    public isUserAssigned(userId: string): boolean {
+    public containsUser(userId: string): boolean {
         return this._firstPlayerId === userId || this._secondPlayerId === userId;
     }
 
     public isFull(): boolean {
-        return this._firstPlayerId !== null && this._secondPlayerId !== null;
+        return !this._firstPlayerId && !this._secondPlayerId;
     }
 
     get id(): string {
@@ -30,5 +30,13 @@ export default class Room {
 
     set secondPlayerId(value: string) {
         this._secondPlayerId = value;
+    }
+
+    public toJsonObject(): any {
+        return {
+            id: this.id,
+            firstPlayerId: this.firstPlayerId,
+            secondPlayerId: this.secondPlayerId
+        }
     }
 }

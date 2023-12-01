@@ -31,7 +31,7 @@ function makeUserJoinOrCreateRoom(userId: string): Room {
 }
 
 function getUsersAssignedRoom(userId: string): Room {
-    return rooms.find(room => room.isUserAssigned(userId));
+    return rooms.find(room => room.containsUser(userId));
 }
 
 function getFirstAvailableRoomIndex(): number {
