@@ -79,7 +79,7 @@ const CardTable = (props: { cards: Card[]; action: string, onCardRemoved: (cardI
                     </thead>
                     <tbody>
                     {props.cards.map(card => (
-                        <tr key={card.id}>
+                        <tr key={props.action === 'sell' ? card.id : card.storeListingId}>
                             <td>
                                 <img className="ui avatar image" src={card.imageUrl} alt={card.name}/>
                                 <span>{card.name}</span>

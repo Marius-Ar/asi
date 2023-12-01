@@ -1,0 +1,62 @@
+version: '3.1'
+
+services:
+
+  esb:
+    image: symptoma/activemq:latest
+    ports:
+      - "61616:61616"
+      - "61613:61613"
+      - "8161:8161"
+    networks:
+      - esb
+    environment:
+      ACTIVEMQ_DISALLOW_WEBCONSOLE: false
+      ACTIVEMQ_USERNAME: myuser
+      ACTIVEMQ_PASSWORD: mypwd
+      ACTIVEMQ_WEBADMIN_USERNAME: myuserweb
+      ACTIVEMQ_WEBADMIN_PASSWORD: mypwd
+
+  db-user:
+    image: postgres
+    restart: always
+    volumes:
+      - db-user:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: app
+    ports:
+      - "5438:5432"
+
+  db-card:
+    image: postgres
+    restart: always
+    volumes:
+      - db-card:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: app
+    ports:
+      - "5439:5432"
+
+  db-store:
+    image: postgres
+    restart: always
+    volumes:
+      - db-store:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: app
+    ports:
+      - "5434:5432"
+
+networks:
+  esb:
+
+volumes:
+  db-user:
+  db-card:
+  db-store:

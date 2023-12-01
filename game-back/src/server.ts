@@ -18,6 +18,7 @@ io.on('connection', socket => {
         const usersRoom = onUserJoinRoom(userId);
         const roomId = usersRoom.id;
         socket.join(roomId);
+        console.log(usersRoom.toJsonObject())
         io.to(roomId).emit('joined', usersRoom.toJsonObject());
     });
 });
