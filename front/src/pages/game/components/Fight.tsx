@@ -2,7 +2,7 @@ import CardDetail from "../../../core/components/card-detail/CardDetail";
 import CardShort from "../../../core/components/card-short/CardShort";
 import React from "react";
 
-export function Game() {
+export function Fight() {
     const actionpoints = 100;
     return (
         <div className="ui segment">

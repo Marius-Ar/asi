@@ -14,12 +14,18 @@ const io = new Server(server, {
 });
 
 io.on('connection', socket => {
+    console.log('a user connected');
+
     socket.on('join-game', ({userId}) => {
         const usersRoom = onUserJoinRoom(userId);
         const roomId = usersRoom.id;
         socket.join(roomId);
         console.log(usersRoom.toJsonObject())
         io.to(roomId).emit('joined', usersRoom.toJsonObject());
+    });
+
+    socket.on('chose', ({userId, cardIds}) => {
+        console.log('chose', userId, cardIds);
     });
 });
 

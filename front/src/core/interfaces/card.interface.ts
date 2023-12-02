@@ -10,6 +10,7 @@ export interface Card {
     defense: number;
     attack: number;
     imageUrl: string;
+    selected?: boolean;
     price?: number;
     sellerId?: UUID;
 }

@@ -13,6 +13,7 @@ import {Login} from "./pages/login/Login";
 import {CardList} from './pages/user-card/UserCard';
 import {JoinGame} from './pages/game/components/JoinGame';
 import {ChooseCards} from './pages/game/components/ChooseCards';
+import {Fight} from './pages/game/components/Fight';
 
 ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -23,14 +24,15 @@ ReactDOM.createRoot(
                 <Header/>
                 <Routes>
                     <Route path="/" element={<Navigate replace to="/market"/>}/>
-                    <Route path="/login" element={protectRoute(<Login/>)}/>
-                    <Route path="/register" element={protectRoute(<Register/>)}/>
+                    <Route path="/login" element={<Login/>}/>
+                    <Route path="/register" element={<Register/>}/>
                     <Route path="/market" element={protectRoute(<Market/>)}/>
                     <Route path="/user-card" element={protectRoute(<CardList/>)}/>
 
                     <Route path="/game">
                         <Route path="join" element={protectRoute(<JoinGame/>)} />
                         <Route path="choose" element={protectRoute(<ChooseCards/>)} />
+                        <Route path="fight" element={protectRoute(<Fight/>)} />
                     </Route>
                 </Routes>
             </BrowserRouter>
