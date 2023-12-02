@@ -1,7 +1,7 @@
 import {v4 as uuidv4} from 'uuid';
 import Room from './Room';
 
-const rooms: Room[] = [];
+var rooms: Room[] = [];
 
 export function onUserJoinRoom(userId: string) {
     const usersAssignedRoom = getUsersAssignedRoom(userId);
@@ -42,4 +42,8 @@ function createRoom(userId: string): Room {
     const newRoom = new Room(uuidv4(), userId);
     rooms.push(newRoom);
     return newRoom;
+}
+
+export function removeRoom(roomid:string){
+    rooms = rooms.filter(room=> room.id == roomid);
 }

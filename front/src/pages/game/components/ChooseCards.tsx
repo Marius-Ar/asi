@@ -7,7 +7,7 @@ import {io} from 'socket.io-client';
 
 export function ChooseCards() {
     const socket = io('http://localhost:3001');
-
+    const userDetails = useSelector((state: AppState) => state.userDetail.userDetails);
     const [cards, setCards] = useState<Card[]>([]);
     const MAX_CARD_COUNT = 4;
 
@@ -41,7 +41,8 @@ export function ChooseCards() {
     }
 
     function onConfirm() {
-        socket.emit('chose', {userId, cardIds: getSelectedCardsIds()});
+        var username = userDetails!.username;
+        socket.emit('chose', {userId, username, cardIds: getSelectedCardsIds()});
         window.location.href = '/game/fight';
     }
 

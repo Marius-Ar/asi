@@ -10,7 +10,7 @@ export default class ApiUser {
                 'Content-Type': 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify(amount)
+            body: JSON.stringify({amount:amount})
         }).then(response => {
                 if (response.ok) {
                     return response.json()

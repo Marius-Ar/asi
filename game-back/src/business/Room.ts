@@ -1,6 +1,21 @@
 import Card from "./Card";
 const energy =200;
 export default class Room {
+    get firstPlayerName(): string | null {
+        return this._firstPlayerName;
+    }
+
+    set firstPlayerName(value: string | null) {
+        this._firstPlayerName = value;
+    }
+
+    get secondPlayerName(): string | null {
+        return this._secondPlayerName;
+    }
+
+    set secondPlayerName(value: string | null) {
+        this._secondPlayerName = value;
+    }
 
     get playerTurn(): string {
         return this._playerTurn;
@@ -55,10 +70,19 @@ export default class Room {
     private _energyUserFirst: number;
     private _energyUserSecond:number;
     private _playerTurn:string|null = null;
-
+    private _firstPlayerName:string|null =null;
+    private _secondPlayerName:string|null =null;
     constructor(id: string, firstPlayerId: string) {
         this._id = id;
         this._firstPlayerId = firstPlayerId;
+    }
+
+    public setUsername(userId:string, username:string){
+        if(this.firstPlayerId == userId){
+            this.firstPlayerName = username;
+        }else{
+            this.secondPlayerName = username;
+        }
     }
 
     public setPlayerCards(userId:string, cards:Card[]){
@@ -102,7 +126,11 @@ export default class Room {
             secondPlayerId: this.secondPlayerId,
             firstPlayerCard: this.firstPlayerCards,
             secondPlayerCard: this.secondPlayerCards,
-            playerTurn: this.playerTurn
+            playerTurn: this.playerTurn,
+            firstPlayerName: this.firstPlayerName,
+            secondPlayerName: this.secondPlayerName,
+            firstPlayerAction: this.energyUserFirst,
+            secondPlayerAction: this.energyUserSecond
         }
     }
 
@@ -111,6 +139,7 @@ export default class Room {
         if(userId == this.firstPlayerId){
             if(this.energyUserFirst > cardFirstPlayer.energy){
                 this.energyUserFirst = this.energyUserFirst - cardFirstPlayer.energy;
+                this.energyUserFirst = Math.round(this.energyUserFirst)
                 actionPossible = true;
             }else{
                 this._playerTurn = this.secondPlayerId;
@@ -120,6 +149,7 @@ export default class Room {
         }else{
             if(this.energyUserSecond > cardSecondPlayer.energy) {
                 this.energyUserSecond = this.energyUserSecond - cardSecondPlayer.energy;
+                this.energyUserSecond = Math.round(this.energyUserSecond);
                 actionPossible = true;
             }else{
                 this._playerTurn = this.firstPlayerId;
@@ -129,10 +159,12 @@ export default class Room {
         if(actionPossible){
             if(this.firstPlayerCards.find(card=> card.id == cardFirstPlayer.id).hp != 0){
                 this.firstPlayerCards.find(card=> card.id == cardFirstPlayer.id).hp -= cardSecondPlayer.attack;
+                this.firstPlayerCards.find(card=> card.id == cardFirstPlayer.id).hp = Math.round(this.firstPlayerCards.find(card=> card.id == cardFirstPlayer.id).hp);
                 this.firstPlayerCards = this.firstPlayerCards.find(card=> card.id == cardFirstPlayer.id).hp <= 0 ? this.firstPlayerCards.filter(card => card.id !== cardFirstPlayer.id) : this.firstPlayerCards;
             }
             if(this.secondPlayerCards.find(card=> card.id == cardSecondPlayer.id).hp != 0){
                 this.secondPlayerCards.find(card=> card.id == cardSecondPlayer.id).hp -= cardFirstPlayer.attack;
+                this.secondPlayerCards.find(card=> card.id == cardSecondPlayer.id).hp = Math.round(this.secondPlayerCards.find(card=> card.id == cardSecondPlayer.id).hp);
                 this.secondPlayerCards = this.secondPlayerCards.find(card=> card.id == cardSecondPlayer.id).hp <= 0 ? this.secondPlayerCards.filter(card => card.id !== cardSecondPlayer.id) : this.secondPlayerCards;
             }
         }

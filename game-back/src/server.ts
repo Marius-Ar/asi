@@ -1,7 +1,7 @@
 import {Server} from 'socket.io';
 import express from 'express';
 import {createServer} from 'http';
-import {onUserJoinRoom} from './business/game-room-logic';
+import {onUserJoinRoom,removeRoom} from './business/game-room-logic';
 
 const {PORT = 3001} = process.env;
 
@@ -31,9 +31,10 @@ io.on('connection', socket => {
         io.to(roomId).emit('info-game', usersRoom.toJsonObject());
     });
 
-    socket.on('chose', ({userId, cardIds}) => {
+    socket.on('chose', ({userId,username, cardIds}) => {
         const usersRoom = onUserJoinRoom(userId);
         usersRoom.setPlayerCards(userId,cardIds);
+        usersRoom.setUsername(userId,username);
         const roomId = usersRoom.id;
         socket.join(roomId);
         usersRoom.setplayerTurn();
@@ -48,6 +49,7 @@ io.on('connection', socket => {
         var winnerId =usersRoom.checkWinner();
         if(winnerId != null){
             const gain = Math.floor(Math.random() * (100 - 10 + 1) + 10);
+            removeRoom(roomId);
             io.to(roomId).emit('winner',{winnerId,gain});
             io.to(roomId).emit('info-game',usersRoom.toJsonObject());
         }else{

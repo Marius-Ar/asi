@@ -8,6 +8,7 @@ import {Card} from "../../../core/interfaces/card.interface";
 import {useNotification} from "../../../core/components/notification/NotificationContext";
 import {NotificationType} from "../../../core/components/notification/Notification";
 import ApiUser from '../../../core/api/ApiUser';
+import {Progress} from "semantic-ui-react";
 
 export function Fight() {
     const socket = io('http://localhost:3001');
@@ -20,8 +21,11 @@ export function Fight() {
         socket.emit('get-info-game', {userId});
     }, [])
 
-    socket.on('info-game', ({id, firstPlayerId, secondPlayerId,firstPlayerCard,secondPlayerCard,playerTurn}) => {
-        const room = new Room(id, firstPlayerId, secondPlayerId,firstPlayerCard,secondPlayerCard,playerTurn);
+    socket.on('info-game', ({id, firstPlayerId, secondPlayerId,firstPlayerCard,secondPlayerCard,playerTurn,firstPlayerName,secondPlayerName,firstPlayerAction,secondPlayerAction}) => {
+        if(playerTurn !== joinedRoom?.playerturn && joinedRoom?.playerturn === userId){
+            showNotification(NotificationType.ERROR,'Vous n\'aviez pas assez d\'énergie pour faire votre dernier tour et votre tour à été stopper')
+        }
+        const room = new Room(id, firstPlayerId, secondPlayerId,firstPlayerCard,secondPlayerCard,playerTurn,firstPlayerName,secondPlayerName,firstPlayerAction,secondPlayerAction);
         setJoinedRoom(room);
         setCardUser1(null);
         setCardUser2(null);
@@ -33,10 +37,10 @@ export function Fight() {
             console.log(winnerId);
             ApiUser.updateBalance(gain,userId!.toString());
             showNotification(NotificationType.SUCCESS, 'Vous avez gagné')
-            window.location.href = '/market';
+            //window.location.href = '/market';
         }else{
             showNotification(NotificationType.ERROR, 'Vous avez perdu')
-            window.location.href = '/market';
+            //window.location.href = '/market';
         }
     });
 
@@ -67,14 +71,16 @@ export function Fight() {
                                         <div className="column"><i className="user circle huge icon "></i></div>
                                     </div>
                                     <div className="row">
-                                        <div className=" column">Eric Smith</div>
+                                        <div className=" column">{joinedRoom?.firstPlayerId == userId ? 'Me' : joinedRoom?.firstPlayerName}</div>
                                     </div>
 
                                     <div className="row">
                                         <div className="column">
-                                            <div className="ui teal progress" data-percent={""+actionpoints}
+                                            <div
                                                  id="progressBarId1">
-                                                <div className="bar"></div>
+                                                { joinedRoom?.energyUserFirst &&
+                                                <Progress progress='value' value={joinedRoom?.energyUserFirst*100/200+""} color='teal'/>
+                                                }
                                                 <div className="label">Action Points</div>
                                             </div>
                                         </div>
@@ -122,16 +128,18 @@ export function Fight() {
                                 <div className="ui one  column centered grid">
                                     <div className="row">
                                         <div className="column">
-                                            <div className="ui teal progress" data-percent="20" id="progressBarId2">
+                                            <div id="progressBarId2">
                                                 <div className="label">Action Points</div>
-                                                <div className="bar"></div>
+                                                { joinedRoom?.energyUserSecond &&
+                                                    <Progress progress='value' value={joinedRoom?.energyUserSecond*100/200+""} color='teal' />
+                                                }
 
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="row">
-                                        <div className=" column">Me</div>
+                                        <div className=" column">{joinedRoom?.secondPlayerId == userId ? 'Me' : joinedRoom?.secondPlayerName }</div>
                                     </div>
                                     <div className="row">
                                         <div className="column"><i className="user circle huge icon "></i></div>
