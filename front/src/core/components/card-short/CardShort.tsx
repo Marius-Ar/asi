@@ -1,7 +1,7 @@
 import React from 'react';
 import {Card} from "../../interfaces/card.interface";
 
-const CardShort: React.FC<Card> = (card) => {
+export function CardShort({card}: { card: Card }){
     return (
         <div className="ui special cards">
             <div className="card">
@@ -12,7 +12,7 @@ const CardShort: React.FC<Card> = (card) => {
                                 <a className="ui red circular label">{card.hp}</a>
                             </div>
                             <div className="column" >
-                                <h5>DEADPOOL</h5>
+                                <h5>{card.name}</h5>
                             </div>
                             <div className="column">
                                 <a className="ui yellow circular label">{card.attack}</a>
@@ -22,7 +22,7 @@ const CardShort: React.FC<Card> = (card) => {
                 </div>
                 <div className="image imageCard">
                     <div className="ui fluid image">
-                        <img id="cardImgId" className="ui centered image" src="https://static.hitek.fr/img/actualite/2017/06/27/i_deadpool-2.jpg"/>
+                        <img id="cardImgId" className="ui centered image" src={card.imageUrl}/>
                     </div>
                 </div>
             </div>

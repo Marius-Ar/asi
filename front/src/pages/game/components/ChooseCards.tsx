@@ -20,19 +20,19 @@ export function ChooseCards() {
         }
     }, []);
 
-    function onCardSelected(event: FormEvent<HTMLInputElement>, cardId: number) {
+    function onCardSelected(event: FormEvent<HTMLInputElement>, cardSelected: Card) {
         const checkbox = event.target as HTMLInputElement;
         const cardsCopy = [...cards];
-        const selectedCard = cardsCopy.find(card => card.id === cardId);
+        const selectedCard = cardsCopy.find(card => card.id === cardSelected.id);
         if (selectedCard) {
             selectedCard.selected = checkbox.checked;
         }
         setCards(cardsCopy);
     }
 
-    function isCardDisabled(cardId: number): boolean {
+    function isCardDisabled(card:Card): boolean {
         const selectedCardsIds = getSelectedCardsIds();
-        const isCardSelected = selectedCardsIds.includes(cardId);
+        const isCardSelected = selectedCardsIds.includes(card);
         return !isCardSelected && selectedCardsIds.length >= MAX_CARD_COUNT;
     }
 
@@ -45,8 +45,8 @@ export function ChooseCards() {
         window.location.href = '/game/fight';
     }
 
-    function getSelectedCardsIds(): number[] {
-        return cards.filter(card => card.selected).map(card => card.id);
+    function getSelectedCardsIds(): Card[] {
+        return cards.filter(card => card.selected).map(card => card);
     }
 
     return (
@@ -55,8 +55,8 @@ export function ChooseCards() {
                 {cards && cards.map(card => (
                     <li key={card.id}>
                         <input type="checkbox"
-                               onInput={event => onCardSelected(event, card.id)}
-                               disabled={isCardDisabled(card.id)}
+                               onInput={event => onCardSelected(event, card)}
+                               disabled={isCardDisabled(card)}
                                id={'card' + card.id}
                         />
                         <p>{card.name}</p>

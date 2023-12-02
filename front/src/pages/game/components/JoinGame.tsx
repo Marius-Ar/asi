@@ -10,7 +10,6 @@ export function JoinGame() {
     const [joinedRoom, setJoinedRoom] = useState<Room | null>(null);
 
     const START_DELAY = 3000;
-
     socket.on('joined', ({id, firstPlayerId, secondPlayerId}) => {
         const room = new Room(id, firstPlayerId, secondPlayerId);
         setJoinedRoom(room);

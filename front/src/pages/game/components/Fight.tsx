@@ -1,9 +1,60 @@
 import CardDetail from "../../../core/components/card-detail/CardDetail";
 import CardShort from "../../../core/components/card-short/CardShort";
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {io} from "socket.io-client";
+import Cookies from "js-cookie";
+import Room from "../classes/Room";
+import {Card} from "../../../core/interfaces/card.interface";
+import {useNotification} from "../../../core/components/notification/NotificationContext";
+import {NotificationType} from "../../../core/components/notification/Notification";
+import ApiUser from '../../../core/api/ApiUser';
 
 export function Fight() {
-    const actionpoints = 100;
+    const socket = io('http://localhost:3001');
+    const userId = Cookies.get('userId');
+    const [joinedRoom, setJoinedRoom] = useState<Room | null>(null);
+    const [cardUser1, setCardUser1] = useState<Card | null>(null);
+    const [cardUser2, setCardUser2] = useState<Card | null>(null);
+    const {showNotification} = useNotification();
+    useEffect(()=>{
+        socket.emit('get-info-game', {userId});
+    }, [])
+
+    socket.on('info-game', ({id, firstPlayerId, secondPlayerId,firstPlayerCard,secondPlayerCard,playerTurn}) => {
+        const room = new Room(id, firstPlayerId, secondPlayerId,firstPlayerCard,secondPlayerCard,playerTurn);
+        setJoinedRoom(room);
+        setCardUser1(null);
+        setCardUser2(null);
+        console.log('yes')
+    });
+
+    socket.on('winner', ({winnerId,gain}) => {
+        if(userId == winnerId){
+            console.log(winnerId);
+            ApiUser.updateBalance(gain,userId!.toString());
+            showNotification(NotificationType.SUCCESS, 'Vous avez gagné')
+            window.location.href = '/market';
+        }else{
+            showNotification(NotificationType.ERROR, 'Vous avez perdu')
+            window.location.href = '/market';
+        }
+    });
+
+    function  selectCardUser(user:string,card:Card){
+        if(joinedRoom?.playerturn == userId) {
+            if (user == 'user1') {
+                setCardUser1(card);
+            } else {
+                setCardUser2(card);
+            }
+        }
+    }
+    function onAttack(){
+        if(cardUser1 !== null && cardUser2 !== null){
+            socket.emit('attack', {userId, cardUser1,cardUser2});
+        }
+    }
+    const actionpoints:number = 100;
     return (
         <div className="ui segment">
             <div className="ui grid">
@@ -21,7 +72,7 @@ export function Fight() {
 
                                     <div className="row">
                                         <div className="column">
-                                            <div className="ui teal progress" data-percent={actionpoints}
+                                            <div className="ui teal progress" data-percent={""+actionpoints}
                                                  id="progressBarId1">
                                                 <div className="bar"></div>
                                                 <div className="label">Action Points</div>
@@ -32,27 +83,17 @@ export function Fight() {
                             </div>
                             <div className="ten wide column">
                                 <div className="ui four column grid">
-                                    <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
-                                                   defense={4} attack={5} imageUrl={""}/>
+                                    {joinedRoom !== null && joinedRoom.firstPlayerCards && joinedRoom.firstPlayerCards.map(card => (
+                                    <div className="column" key={'user1'+card.id} onClick={() => selectCardUser('user1',card)}>
+                                        <CardShort card={card}/>
                                     </div>
-                                    <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
-                                                   defense={4} attack={5} imageUrl={""}/>
-                                    </div>
-                                    <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
-                                                   defense={4} attack={5} imageUrl={""}/>
-                                    </div>
-                                    <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
-                                                   defense={4} attack={5} imageUrl={""}/>
-                                    </div>
+                                        ))}
                                 </div>
                             </div>
                             <div className="four wide column">
-                                <CardDetail id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4}
-                                            attack={5} imageUrl={""}/>
+                                {cardUser1 !== null &&
+                                <CardDetail card={cardUser1}/>
+                                }
                             </div>
                         </div>
                     </div>
@@ -65,9 +106,11 @@ export function Fight() {
                                 </h4>
                             </div>
                             <div className="four wide column">
-                                <button className="huge ui primary button">
+                                { joinedRoom !== null && joinedRoom.playerturn == userId &&
+                                <button className="huge ui primary button" onClick={()=> onAttack()}>
                                     Attack
                                 </button>
+                                }
                             </div>
                         </div>
                     </div>
@@ -98,27 +141,18 @@ export function Fight() {
                             </div>
                             <div className="ten wide column">
                                 <div className="ui four column grid">
-                                    <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
-                                                   defense={4} attack={5} imageUrl={""}/>
+                                    {joinedRoom !== null && joinedRoom.secondPlayerCards && joinedRoom.secondPlayerCards.map(card => (
+                                    <div className="column" key={'user2'+card.id} onClick={() => selectCardUser('user2',card)}>
+                                        <CardShort card={card} />
                                     </div>
-                                    <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
-                                                   defense={4} attack={5} imageUrl={""}/>
-                                    </div>
-                                    <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
-                                                   defense={4} attack={5} imageUrl={""}/>
-                                    </div>
-                                    <div className="column">
-                                        <CardShort id={1} name={""} description={""} price={3} hp={10} energy={40}
-                                                   defense={4} attack={5} imageUrl={""}/>
-                                    </div>
+                                        ))}
+
                                 </div>
                             </div>
                             <div className="four wide column">
-                                <CardDetail id={1} name={""} description={""} price={3} hp={10} energy={40} defense={4}
-                                            attack={5} imageUrl={""}/>
+                                { cardUser2 !== null &&
+                                <CardDetail card={cardUser2}/>
+                                }
                             </div>
                         </div>
                     </div>

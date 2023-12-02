@@ -1,7 +1,7 @@
 import React from 'react';
 import {Card} from "../../interfaces/card.interface";
 
-const CardDetail: React.FC<Card> = (card) => {
+export function CardDetail({card}: { card: Card }){
     return (
         <div className="ui special cards">
             <div className="card">
@@ -33,7 +33,7 @@ const CardDetail: React.FC<Card> = (card) => {
                             <a className="ui left corner label">
                                 {card.name}
                             </a>
-                            <img className="ui centered image" src="https://static.hitek.fr/img/actualite/2017/06/27/i_deadpool-2.jpg" alt={card.name}/>
+                            <img className="ui centered image" src={card.imageUrl} alt={card.name}/>
                         </div>
                     </div>
                 </div>
