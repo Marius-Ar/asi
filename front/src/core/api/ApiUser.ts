@@ -1,3 +1,8 @@
+interface UserDto {
+    id: string;
+    name: string;
+    // Ajoutez d'autres champs selon la structure de vos données
+}
 
 
 export default class ApiUser {
@@ -11,6 +16,24 @@ export default class ApiUser {
             },
             credentials: 'include',
             body: JSON.stringify({amount:amount})
+        }).then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error('Something went wrong ...')
+                }
+            }
+        )
+    };
+
+    static getUsers = async (): Promise<UserDto[]> => {
+
+        return await fetch(`${ApiUser.userApiUri}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
         }).then(response => {
                 if (response.ok) {
                     return response.json()

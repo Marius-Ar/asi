@@ -30,7 +30,6 @@ io.on('connection', socket => {
         console.log(usersRoom.toJsonObject())
         io.to(roomId).emit('info-game', usersRoom.toJsonObject());
     });
-
     socket.on('chose', ({userId,username, cardIds}) => {
         const usersRoom = onUserJoinRoom(userId);
         usersRoom.setPlayerCards(userId,cardIds);
@@ -55,6 +54,19 @@ io.on('connection', socket => {
         }else{
             io.to(roomId).emit('info-game',usersRoom.toJsonObject());
         }
+    });
+
+    //// CHAT
+    socket.on('join-chat', ({userId}) => {
+        const usersRoom = onUserJoinRoom(userId);
+        const roomId = usersRoom.id;
+        socket.join(roomId);
+        io.to(roomId).emit('joined', usersRoom.toJsonObject());
+    });
+
+    socket.on('message', (roomId, message, userId) => {
+        console.log(roomId, message)
+        io.to(roomId).emit('message', message, userId);
     });
 });
 
