@@ -9,13 +9,13 @@ export function CardDetail({card}: { card: Card }){
                     <div className="ui grid">
                         <div className="three column row">
                             <div className="column">
-                                <i className="heart outline icon"></i><span>{card.hp}</span>
+                                <i className="heart outline icon"></i><span>{card.hp.toFixed(1)}</span>
                             </div>
                             <div className="column">
                                 <h5>{card.name}</h5>
                             </div>
                             <div className="column">
-                                <span>{card.energy}</span> <i className="lightning icon"></i>
+                                <span>{card.energy.toFixed(1)}</span> <i className="lightning icon"></i>
                             </div>
                         </div>
                     </div>
@@ -48,9 +48,9 @@ export function CardDetail({card}: { card: Card }){
                     </div>
                 </div>
                 <div className="content">
-                    <i className="heart outline icon"></i> HP {card.hp}
+                    <i className="heart outline icon"></i> HP {card.hp.toFixed(1)}
                     <div className="right floated">
-                        Energy {card.energy}
+                        Energy {card.energy.toFixed(1)}
                         <i className="lightning icon"></i>
                     </div>
                 </div>

@@ -1,7 +1,9 @@
 import {Server} from 'socket.io';
 import express from 'express';
 import {createServer} from 'http';
-import {onUserJoinRoom,removeRoom} from './business/game-room-logic';
+import {onUserJoinRoom, removeRoom} from './business/game-room-logic';
+import Room from './business/Room';
+import Card from './business/Card';
 
 const {PORT = 3001} = process.env;
 
@@ -15,45 +17,45 @@ const io = new Server(server, {
 
 io.on('connection', socket => {
     console.log('a user connected');
+    let usersRoom: Room | null = null;
 
     socket.on('join-game', ({userId}) => {
-        const usersRoom = onUserJoinRoom(userId);
-        const roomId = usersRoom.id;
-        socket.join(roomId);
-        console.log(usersRoom.toJsonObject())
-        io.to(roomId).emit('joined', usersRoom.toJsonObject());
-    });
-    socket.on('get-info-game', ({userId}) => {
-        const usersRoom = onUserJoinRoom(userId);
-        const roomId = usersRoom.id;
-        socket.join(roomId);
-        console.log(usersRoom.toJsonObject())
-        io.to(roomId).emit('info-game', usersRoom.toJsonObject());
+        usersRoom = onUserJoinRoom(userId);
+        if (usersRoom) {
+            socket.join(usersRoom.id);
+            io.to(usersRoom.id).emit('joined', usersRoom.serialize());
+        }
     });
 
-    socket.on('chose', ({userId,username, cardIds}) => {
-        const usersRoom = onUserJoinRoom(userId);
-        usersRoom.setPlayerCards(userId,cardIds);
-        usersRoom.setUsername(userId,username);
-        const roomId = usersRoom.id;
-        socket.join(roomId);
-        usersRoom.setplayerTurn();
-        io.to(roomId).emit('info-game',usersRoom.toJsonObject());
+    socket.on('get-info-game', () => {
+        if (usersRoom) {
+            io.to(usersRoom.id).emit('info-game', usersRoom.serialize());
+        }
     });
-    socket.on('attack', ({userId, cardUser1,cardUser2}) => {
-        const usersRoom = onUserJoinRoom(userId);
-        usersRoom.attackPlayer(userId,cardUser1,cardUser2);
 
-        const roomId = usersRoom.id;
-        socket.join(roomId);
-        var winnerId =usersRoom.checkWinner();
-        if(winnerId != null){
-            const gain = Math.floor(Math.random() * (100 - 10 + 1) + 10);
-            removeRoom(roomId);
-            io.to(roomId).emit('winner',{winnerId,gain});
-            io.to(roomId).emit('info-game',usersRoom.toJsonObject());
-        }else{
-            io.to(roomId).emit('info-game',usersRoom.toJsonObject());
+    socket.on('chose', ({userId, cards}: {userId: string, cards: Card[]}) => {
+        if (usersRoom) {
+            usersRoom.initGame(userId, cards);
+            io.to(usersRoom.id).emit('info-game', usersRoom.serialize());
+        }
+    });
+
+    socket.on('attack', ({userId, attackingCard, targetCard}) => {
+        if (usersRoom) {
+            usersRoom.attackPlayer(userId, attackingCard, targetCard);
+
+            const winnerId = usersRoom.getWinner();
+            if (winnerId) {
+                const gain = Math.floor(Math.random() * (100 - 10 + 1) + 10);
+                io.to(usersRoom.id).emit('winner', {winnerId, gain});
+            }
+
+            io.to(usersRoom.id).emit('info-game', usersRoom.serialize());
+
+            if (winnerId) {
+                removeRoom(usersRoom.id);
+                usersRoom = null;
+            }
         }
     });
 });

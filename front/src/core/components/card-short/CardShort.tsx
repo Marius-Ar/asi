@@ -1,7 +1,7 @@
 import React from 'react';
 import {Card} from "../../interfaces/card.interface";
 
-export function CardShort({card}: { card: Card }){
+export function CardShort({card}: { card: Card }) {
     return (
         <div className="ui special cards">
             <div className="card">
@@ -9,13 +9,13 @@ export function CardShort({card}: { card: Card }){
                     <div className="ui grid">
                         <div className="three column row">
                             <div className="column">
-                                <a className="ui red circular label">{card.hp}</a>
+                                <a className="ui red circular label">{card.hp.toFixed(1)}</a>
                             </div>
-                            <div className="column" >
+                            <div className="column">
                                 <h5>{card.name}</h5>
                             </div>
                             <div className="column">
-                                <a className="ui yellow circular label">{card.attack}</a>
+                                <a className="ui yellow circular label">{card.attack.toFixed(1)}</a>
                             </div>
                         </div>
                     </div>
@@ -26,11 +26,8 @@ export function CardShort({card}: { card: Card }){
                     </div>
                 </div>
             </div>
-
         </div>
-
-
-)
+    )
 }
 
 export default CardShort;
