@@ -2,10 +2,6 @@ import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {AppState} from "../../../store/store";
 import WebSocketGameChat from "../WebSocketGameChat";
-import {Header} from "semantic-ui-react";
-import ApiUser from "../../../core/api/ApiUser";
-import {io} from "socket.io-client";
-import {NotificationType} from "../../../core/components/notification/Notification";
 
 
 interface UserDto {
@@ -28,6 +24,7 @@ export function GameChat() {
     const userId: string | null = useSelector((state: AppState) => state.auth.userId);
     const [selectedUser, setSelectedUser] = useState<UserDto | null>(null);
     const [roomId, setRoomId] = useState<string>('');
+    //TODO: remplacer par un array vide une fois le cors corrige
     const [users, setUsers] = useState<UserDto[]>([
         {
             id: 'f552e7f5-66b1-4f78-b439-c4d8cfc74b06',
@@ -44,7 +41,7 @@ export function GameChat() {
     useEffect(() => {
         const fetchUsers = async () => {
             //get request to get users
-            //TODO: PROBLEM LIST USER
+            //TODO: PROBLEM LIST USER decomenter les 2 lignes ci dessous
             //const usersData: UserDto[] = await ApiUser.getUsers();
             //setUsers(usersData);
         };
@@ -53,10 +50,7 @@ export function GameChat() {
 
 
         socket?.socket?.on('message', (message: Message) => {
-            console.log('ASDKJAS', message)
-            console.log(messages)
             setMessages(prevMessages => [...prevMessages, message]);
-            console.log(messages)
         });
 
         return () =>{
@@ -76,11 +70,8 @@ export function GameChat() {
 
     const handleSelectUser = (user: UserDto) => {
         setSelectedUser(user);
-        console.log('USER', userId)
-        console.log('SELECTED USER', user)
         const roomId: string = [userId, user.id].sort().join('-');
         socket.joinRoom(roomId);
-        console.log('EKIP', roomId)
         setRoomId(roomId);
     }
 
