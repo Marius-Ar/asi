@@ -7,58 +7,62 @@ import Room from "../classes/Room";
 import {Card} from "../../../core/interfaces/card.interface";
 import {useNotification} from "../../../core/components/notification/NotificationContext";
 import {NotificationType} from "../../../core/components/notification/Notification";
-import ApiUser from '../../../core/api/ApiUser';
 import {Progress} from "semantic-ui-react";
 
 export function Fight() {
     const socket = io('http://localhost:3001');
     const userId = Cookies.get('userId');
     const [joinedRoom, setJoinedRoom] = useState<Room | null>(null);
-    const [cardUser1, setCardUser1] = useState<Card | null>(null);
-    const [cardUser2, setCardUser2] = useState<Card | null>(null);
+    const [firstPlayerCard, setFirstPlayerCard] = useState<Card | null>(null);
+    const [secondPlayerCard, setSecondPlayerCard] = useState<Card | null>(null);
     const {showNotification} = useNotification();
-    useEffect(()=>{
+
+    useEffect(() => {
         socket.emit('get-info-game', {userId});
     }, [])
 
-    socket.on('info-game', ({id, firstPlayerId, secondPlayerId,firstPlayerCard,secondPlayerCard,playerTurn,firstPlayerName,secondPlayerName,firstPlayerAction,secondPlayerAction}) => {
-        if(playerTurn !== joinedRoom?.playerturn && joinedRoom?.playerturn === userId){
-            showNotification(NotificationType.ERROR,'Vous n\'aviez pas assez d\'énergie pour faire votre dernier tour et votre tour à été stopper')
+    socket.on('info-game', ({
+                                id,
+                                firstPlayer,
+                                secondPlayer,
+                                turn
+                            }) => {
+        if (turn !== joinedRoom?.turn && joinedRoom?.turn?.id === userId) {
+            showNotification(NotificationType.ERROR, 'Vous n\'aviez pas assez d\'énergie pour faire votre dernier tour et votre tour à été stopper')
         }
-        const room = new Room(id, firstPlayerId, secondPlayerId,firstPlayerCard,secondPlayerCard,playerTurn,firstPlayerName,secondPlayerName,firstPlayerAction,secondPlayerAction);
+
+        const room = new Room(id, firstPlayer, secondPlayer, turn);
         setJoinedRoom(room);
-        setCardUser1(null);
-        setCardUser2(null);
-        console.log('yes')
+        setFirstPlayerCard(null);
+        setSecondPlayerCard(null);
     });
 
-    socket.on('winner', ({winnerId,gain}) => {
-        if(userId == winnerId){
-            console.log(winnerId);
-            ApiUser.updateBalance(gain,userId!.toString());
-            showNotification(NotificationType.SUCCESS, 'Vous avez gagné')
-            //window.location.href = '/market';
-        }else{
-            showNotification(NotificationType.ERROR, 'Vous avez perdu')
-            //window.location.href = '/market';
+    socket.on('winner', ({winnerId}) => {
+        if (userId == winnerId) {
+            showNotification(NotificationType.SUCCESS, 'Vous avez gagné');
+        } else {
+            showNotification(NotificationType.ERROR, 'Vous avez perdu');
         }
+        window.location.href = '/market';
     });
 
-    function  selectCardUser(user:string,card:Card){
-        if(joinedRoom?.playerturn == userId) {
+    function selectCardUser(user: string, card: Card) {
+        if (joinedRoom?.turn == userId) {
             if (user == 'user1') {
-                setCardUser1(card);
+                setFirstPlayerCard(card);
             } else {
-                setCardUser2(card);
+                setSecondPlayerCard(card);
             }
         }
     }
-    function onAttack(){
-        if(cardUser1 !== null && cardUser2 !== null){
-            socket.emit('attack', {userId, cardUser1,cardUser2});
+
+    function onAttack() {
+        if (firstPlayerCard !== null && secondPlayerCard !== null) {
+            socket.emit('attack', {userId, cardUser1: firstPlayerCard, cardUser2: secondPlayerCard});
         }
     }
-    const actionpoints:number = 100;
+
+    const actionpoints: number = 100;
     return (
         <div className="ui segment">
             <div className="ui grid">
@@ -71,15 +75,18 @@ export function Fight() {
                                         <div className="column"><i className="user circle huge icon "></i></div>
                                     </div>
                                     <div className="row">
-                                        <div className=" column">{joinedRoom?.firstPlayerId == userId ? 'Me' : joinedRoom?.firstPlayerName}</div>
+                                        <div
+                                            className=" column">{joinedRoom?.firstPlayer.id == userId ? 'Me' : joinedRoom?.firstPlayer.username}</div>
                                     </div>
 
                                     <div className="row">
                                         <div className="column">
                                             <div
-                                                 id="progressBarId1">
-                                                { joinedRoom?.energyUserFirst &&
-                                                <Progress progress='value' value={joinedRoom?.energyUserFirst*100/200+""} color='teal'/>
+                                                id="progressBarId1">
+                                                {joinedRoom?.firstPlayer.energy &&
+                                                    <Progress progress='value'
+                                                              value={joinedRoom?.firstPlayer.energy * 100 / 200 + ""}
+                                                              color='teal'/>
                                                 }
                                                 <div className="label">Action Points</div>
                                             </div>
@@ -89,16 +96,17 @@ export function Fight() {
                             </div>
                             <div className="ten wide column">
                                 <div className="ui four column grid">
-                                    {joinedRoom !== null && joinedRoom.firstPlayerCards && joinedRoom.firstPlayerCards.map(card => (
-                                    <div className="column" key={'user1'+card.id} onClick={() => selectCardUser('user1',card)}>
-                                        <CardShort card={card}/>
-                                    </div>
-                                        ))}
+                                    {joinedRoom !== null && joinedRoom.firstPlayer.cards?.map(card => (
+                                        <div className="column" key={'user1' + card.id}
+                                             onClick={() => selectCardUser('user1', card)}>
+                                            <CardShort card={card}/>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                             <div className="four wide column">
-                                {cardUser1 !== null &&
-                                <CardDetail card={cardUser1}/>
+                                {firstPlayerCard !== null &&
+                                    <CardDetail card={firstPlayerCard}/>
                                 }
                             </div>
                         </div>
@@ -112,16 +120,14 @@ export function Fight() {
                                 </h4>
                             </div>
                             <div className="four wide column">
-                                { joinedRoom !== null && joinedRoom.playerturn == userId &&
-                                <button className="huge ui primary button" onClick={()=> onAttack()}>
-                                    Attack
-                                </button>
+                                {joinedRoom !== null && joinedRoom.turn?.id == userId &&
+                                    <button className="huge ui primary button" onClick={() => onAttack()}>
+                                        Attack
+                                    </button>
                                 }
                             </div>
                         </div>
                     </div>
-
-
                     <div className="row">
                         <div className="ui grid">
                             <div className="two wide column">
@@ -130,8 +136,10 @@ export function Fight() {
                                         <div className="column">
                                             <div id="progressBarId2">
                                                 <div className="label">Action Points</div>
-                                                { joinedRoom?.energyUserSecond &&
-                                                    <Progress progress='value' value={joinedRoom?.energyUserSecond*100/200+""} color='teal' />
+                                                {joinedRoom?.secondPlayer &&
+                                                    <Progress progress='value'
+                                                              value={joinedRoom?.secondPlayer.energy * 100 / 200 + ""}
+                                                              color='teal'/>
                                                 }
 
                                             </div>
@@ -139,7 +147,8 @@ export function Fight() {
                                     </div>
 
                                     <div className="row">
-                                        <div className=" column">{joinedRoom?.secondPlayerId == userId ? 'Me' : joinedRoom?.secondPlayerName }</div>
+                                        <div
+                                            className=" column">{joinedRoom?.secondPlayer?.id == userId ? 'Me' : joinedRoom?.secondPlayer?.username}</div>
                                     </div>
                                     <div className="row">
                                         <div className="column"><i className="user circle huge icon "></i></div>
@@ -149,23 +158,22 @@ export function Fight() {
                             </div>
                             <div className="ten wide column">
                                 <div className="ui four column grid">
-                                    {joinedRoom !== null && joinedRoom.secondPlayerCards && joinedRoom.secondPlayerCards.map(card => (
-                                    <div className="column" key={'user2'+card.id} onClick={() => selectCardUser('user2',card)}>
-                                        <CardShort card={card} />
-                                    </div>
-                                        ))}
+                                    {joinedRoom !== null && joinedRoom.secondPlayer?.cards?.map(card => (
+                                        <div className="column" key={'user2' + card.id}
+                                             onClick={() => selectCardUser('user2', card)}>
+                                            <CardShort card={card}/>
+                                        </div>
+                                    ))}
 
                                 </div>
                             </div>
                             <div className="four wide column">
-                                { cardUser2 !== null &&
-                                <CardDetail card={cardUser2}/>
+                                {secondPlayerCard !== null &&
+                                    <CardDetail card={secondPlayerCard}/>
                                 }
                             </div>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>

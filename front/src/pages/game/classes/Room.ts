@@ -1,109 +1,55 @@
-import {Card} from "../../../core/interfaces/card.interface";
+import {Player} from './Player';
 
 export default class Room {
-    get energyUserFirst(): number | null {
-        return this._energyUserFirst;
-    }
 
-    set energyUserFirst(value: number | null) {
-        this._energyUserFirst = value;
-    }
-
-    get energyUserSecond(): number | null {
-        return this._energyUserSecond;
-    }
-
-    set energyUserSecond(value: number | null) {
-        this._energyUserSecond = value;
-    }
-
-    get firstPlayerName(): string | null {
-        return this._firstPlayerName;
-    }
-
-    set firstPlayerName(value: string | null) {
-        this._firstPlayerName = value;
-    }
-
-    get secondPlayerName(): string | null {
-        return this._secondPlayerName;
-    }
-
-    set secondPlayerName(value: string | null) {
-        this._secondPlayerName = value;
-    }
-    get playerturn(): string | null {
-        return this._playerturn;
-    }
-
-    set playerturn(value: string | null) {
-        this._playerturn = value;
-    }
-    private _id: string;
-    private _firstPlayerId: string;
-    private _secondPlayerId: string | null = null;
-    private _firstPlayerCards: Card[] = [];
-    private _secondPlayerCards: Card[] = [];
-    private _energyUserFirst: number|null = null;
-    private _energyUserSecond:number|null = null;
-    private _playerturn:string|null = null;
-    private _firstPlayerName:string|null =null;
-    private _secondPlayerName:string|null =null;
-
-    constructor(id: string, firstPlayerId: string, secondPlayerId: string | null = null, firstPlayerCard:Card[] =[],secondPlayerCard:Card[] =[],playerTurn:string|null =null,firstPlayerName:string|null=null,secondPlayerName:string|null=null,firstPlayerAction:number|null=null,secondPlayerAction:number|null=null) {
+    constructor(id: string, firstPlayer: Player, secondPlayer: Player | null, turn: Player | null) {
         this._id = id;
-        this._firstPlayerId = firstPlayerId;
-        this._secondPlayerId = secondPlayerId;
-        this._firstPlayerCards = firstPlayerCard;
-        this._secondPlayerCards =  secondPlayerCard;
-        this._playerturn = playerTurn;
-        this._energyUserFirst = firstPlayerAction;
-        this._energyUserSecond = secondPlayerAction;
-        this._firstPlayerName = firstPlayerName;
-        this._secondPlayerName = secondPlayerName;
+        this._firstPlayer = firstPlayer;
+        this._secondPlayer = secondPlayer;
+        this._turn = turn;
     }
 
-    public isFull(): boolean {
-        return !!this._firstPlayerId && !!this._secondPlayerId;
-    }
+    private _id: string;
 
-    get firstPlayerCards(): Card[] {
-        return this._firstPlayerCards;
-    }
-
-    set firstPlayerCards(value: Card[]) {
-        this._firstPlayerCards = value;
-    }
-
-    get secondPlayerCards(): Card[] {
-        return this._secondPlayerCards;
-    }
-
-    set secondPlayerCards(value: Card[]) {
-        this._secondPlayerCards = value;
+    get id(): string {
+        return this._id;
     }
 
     set id(value: string) {
         this._id = value;
     }
 
-    set firstPlayerId(value: string) {
-        this._firstPlayerId = value;
+    private _firstPlayer: Player;
+
+    get firstPlayer(): Player {
+        return this._firstPlayer;
     }
 
-    set secondPlayerId(value: string | null) {
-        this._secondPlayerId = value;
+    set firstPlayer(value: Player) {
+        this._firstPlayer = value;
     }
 
-    get id(): string {
-        return this._id;
+    private _secondPlayer: Player | null;
+
+    get secondPlayer(): Player | null {
+        return this._secondPlayer;
     }
 
-    get firstPlayerId(): string {
-        return this._firstPlayerId;
+    set secondPlayer(value: Player | null) {
+        this._secondPlayer = value;
     }
 
-    get secondPlayerId(): string | null {
-        return this._secondPlayerId;
+    private _turn: Player | null = null;
+
+    get turn(): Player | null {
+        return this._turn;
+    }
+
+    set turn(value: Player | null) {
+        this._turn = value;
+    }
+
+    isFull(): boolean {
+        return this._firstPlayer !== null && this._secondPlayer !== null;
     }
 }

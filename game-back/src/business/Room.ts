@@ -1,185 +1,104 @@
 import Card from "./Card";
-const energy =200;
-export default class Room {
-    get firstPlayerName(): string | null {
-        return this._firstPlayerName;
+import {v4 as uuidv4} from 'uuid';
+import {Player} from './Player';
+import {Serializable} from './Serializable';
+
+export default class Room extends Serializable {
+    private readonly _id: string;
+    private readonly _firstPlayer: Player;
+
+    constructor(firstPlayerId: string) {
+        super();
+        this._id = uuidv4();
+        this._firstPlayer = new Player(firstPlayerId);
     }
 
-    set firstPlayerName(value: string | null) {
-        this._firstPlayerName = value;
+    private _secondPlayer?: Player;
+
+    get secondPlayer(): Player | undefined {
+        return this._secondPlayer;
     }
 
-    get secondPlayerName(): string | null {
-        return this._secondPlayerName;
+    set secondPlayer(player: Player | undefined) {
+        this._secondPlayer = player;
     }
 
-    set secondPlayerName(value: string | null) {
-        this._secondPlayerName = value;
-    }
+    private _turn: Player | null = null;
 
-    get playerTurn(): string {
-        return this._playerTurn;
-    }
-
-    public setplayerTurn() {
-        if(this.playerTurn == null) {
-            const index1 = Math.floor(Math.random() * this.firstPlayerId.length);
-            const index2 = Math.floor(Math.random() * this.secondPlayerId.length);
-
-            const randomIndex = Math.min(index1, index2);
-
-            this._playerTurn = randomIndex === index1 ? this.firstPlayerId : this.secondPlayerId;
-        }
-
-    }
-    get energyUserFirst(): number {
-        return this._energyUserFirst;
-    }
-
-    set energyUserFirst(value: number) {
-        this._energyUserFirst = value;
-    }
-
-    get energyUserSecond(): number {
-        return this._energyUserSecond;
-    }
-
-    set energyUserSecond(value: number) {
-        this._energyUserSecond = value;
-    }
-    get firstPlayerCards(): Card[] {
-        return this._firstPlayerCards;
-    }
-
-    set firstPlayerCards(value: Card[]) {
-        this._firstPlayerCards = value;
-    }
-
-    get secondPlayerCards(): Card[] {
-        return this._secondPlayerCards;
-    }
-
-    set secondPlayerCards(value: Card[]) {
-        this._secondPlayerCards = value;
-    }
-    private _id: string;
-    private _firstPlayerId: string;
-    private _secondPlayerId?: string;
-    private _firstPlayerCards: Card[];
-    private _secondPlayerCards: Card[];
-    private _energyUserFirst: number;
-    private _energyUserSecond:number;
-    private _playerTurn:string|null = null;
-    private _firstPlayerName:string|null =null;
-    private _secondPlayerName:string|null =null;
-    constructor(id: string, firstPlayerId: string) {
-        this._id = id;
-        this._firstPlayerId = firstPlayerId;
-    }
-
-    public setUsername(userId:string, username:string){
-        if(this.firstPlayerId == userId){
-            this.firstPlayerName = username;
-        }else{
-            this.secondPlayerName = username;
-        }
-    }
-
-    public setPlayerCards(userId:string, cards:Card[]){
-        this.energyUserFirst = energy;
-        this.energyUserSecond = energy;
-        if(this.firstPlayerId == userId){
-            this._firstPlayerCards = cards;
-        }else{
-            this._secondPlayerCards = cards;
-        }
-    }
-
-    public containsUser(userId: string): boolean {
-        return this._firstPlayerId === userId || this._secondPlayerId === userId;
-    }
-
-    public isFull(): boolean {
-        return !this._firstPlayerId && !this._secondPlayerId;
+    get turn(): Player | null {
+        return this._turn;
     }
 
     get id(): string {
         return this._id;
     }
 
-    get firstPlayerId(): string {
-        return this._firstPlayerId;
+    get firstPlayer(): Player {
+        return this._firstPlayer;
     }
 
-    get secondPlayerId(): string {
-        return this._secondPlayerId;
+    public setPlayerCards(userId: string, cards: Card[]) {
+        if (this.firstPlayer.id == userId) {
+            this._firstPlayer.cards = cards;
+        } else if (this._secondPlayer) {
+            this._secondPlayer.cards = cards;
+        }
     }
 
-    set secondPlayerId(value: string) {
-        this._secondPlayerId = value;
+    public containsUser(userId: string): boolean {
+        return this._firstPlayer.id === userId || this._secondPlayer?.id === userId;
     }
 
-    public toJsonObject(): any {
+    public isFull(): boolean {
+        return !!this._firstPlayer && !!this._secondPlayer;
+    }
+
+    public attackPlayer(userId: string, attackingCard: Card, targetCard: Card) {
+
+        const currentPlayer = userId === this.firstPlayer.id ? this.firstPlayer : this.secondPlayer;
+        const isActionPerformable = this.isActionPerformable(currentPlayer, attackingCard, targetCard);
+
+        if (isActionPerformable && !!currentPlayer) {
+            const otherPlayer = userId === this.firstPlayer.id ? this.secondPlayer : this.firstPlayer;
+
+            if (!otherPlayer) {
+                return;
+            }
+
+            currentPlayer.energy -= attackingCard.energy;
+            targetCard.hp -= attackingCard.attack;
+            this._turn = otherPlayer;
+        }
+    }
+
+    public getWinner(): string | undefined {
+        if (!!this.firstPlayer && this.firstPlayer.cards.length == 0) {
+            return this.firstPlayer?.id;
+        } else if (!!this.secondPlayer && this.secondPlayer.cards.length == 0) {
+            return this.secondPlayer?.id;
+        } else {
+            return undefined;
+        }
+    }
+
+    public serialize(): any {
         return {
             id: this.id,
-            firstPlayerId: this.firstPlayerId,
-            secondPlayerId: this.secondPlayerId,
-            firstPlayerCard: this.firstPlayerCards,
-            secondPlayerCard: this.secondPlayerCards,
-            playerTurn: this.playerTurn,
-            firstPlayerName: this.firstPlayerName,
-            secondPlayerName: this.secondPlayerName,
-            firstPlayerAction: this.energyUserFirst,
-            secondPlayerAction: this.energyUserSecond
+            firstPlayer: this.firstPlayer.serialize(),
+            secondPlayer: this.secondPlayer?.serialize(),
+            playerTurn: this.turn
         }
     }
 
-    public attackPlayer(userId:string, cardFirstPlayer:Card, cardSecondPlayer:Card){
-        var actionPossible = false;
-        if(userId == this.firstPlayerId){
-            if(this.energyUserFirst > cardFirstPlayer.energy){
-                this.energyUserFirst = this.energyUserFirst - cardFirstPlayer.energy;
-                this.energyUserFirst = Math.round(this.energyUserFirst)
-                actionPossible = true;
-            }else{
-                this._playerTurn = this.secondPlayerId;
-                this.energyUserFirst = energy;
-            }
-
-        }else{
-            if(this.energyUserSecond > cardSecondPlayer.energy) {
-                this.energyUserSecond = this.energyUserSecond - cardSecondPlayer.energy;
-                this.energyUserSecond = Math.round(this.energyUserSecond);
-                actionPossible = true;
-            }else{
-                this._playerTurn = this.firstPlayerId;
-                this.energyUserSecond = energy;
-            }
-        }
-        if(actionPossible){
-            if(this.firstPlayerCards.find(card=> card.id == cardFirstPlayer.id).hp != 0){
-                this.firstPlayerCards.find(card=> card.id == cardFirstPlayer.id).hp -= cardSecondPlayer.attack;
-                this.firstPlayerCards.find(card=> card.id == cardFirstPlayer.id).hp = Math.round(this.firstPlayerCards.find(card=> card.id == cardFirstPlayer.id).hp);
-                this.firstPlayerCards = this.firstPlayerCards.find(card=> card.id == cardFirstPlayer.id).hp <= 0 ? this.firstPlayerCards.filter(card => card.id !== cardFirstPlayer.id) : this.firstPlayerCards;
-            }
-            if(this.secondPlayerCards.find(card=> card.id == cardSecondPlayer.id).hp != 0){
-                this.secondPlayerCards.find(card=> card.id == cardSecondPlayer.id).hp -= cardFirstPlayer.attack;
-                this.secondPlayerCards.find(card=> card.id == cardSecondPlayer.id).hp = Math.round(this.secondPlayerCards.find(card=> card.id == cardSecondPlayer.id).hp);
-                this.secondPlayerCards = this.secondPlayerCards.find(card=> card.id == cardSecondPlayer.id).hp <= 0 ? this.secondPlayerCards.filter(card => card.id !== cardSecondPlayer.id) : this.secondPlayerCards;
-            }
-        }
-
-
+    public pickRandomPlayer(): Player | undefined {
+        const randomIndex = Math.round(Math.random()); // 0 or 1
+        return randomIndex === 0 ? this.firstPlayer : this.secondPlayer;
     }
 
-    public checkWinner():string|null{
-        if(this.firstPlayerCards.length == 0){
-            return this.secondPlayerId;
+    private isActionPerformable(currentPlayer: Player | undefined, attackingCard: Card, targetCard: Card): boolean {
+        if (!currentPlayer) {
+            return false;
         }
-        else if(this.secondPlayerCards.length == 0){
-            return  this.firstPlayerId;
-        }else{
-            return null;
-        }
+        return currentPlayer.energy > attackingCard.energy && attackingCard.hp > 0 && targetCard.hp > 0;
     }
 }

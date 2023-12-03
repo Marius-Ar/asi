@@ -2,6 +2,7 @@ import {combineReducers, createStore} from 'redux';
 import authReducer from './authReducer';
 import userReducer from './userDetailReducer';
 import {notificationSessionReducer} from "./notificationSessionReducer";
+import gameSocketReducer from './gameSocketReducer';
 
 function getUserIdFromCookie() {
     const userIdCookie = document.cookie.split('; ').find(row => row.startsWith('userId='));
@@ -11,12 +12,14 @@ function getUserIdFromCookie() {
 const initialState = {
     isAuthenticated: getUserIdFromCookie() !== null,
     userId: getUserIdFromCookie(),
-    notificationSession: notificationSessionReducer
+    notificationSession: notificationSessionReducer,
+    socket: gameSocketReducer
 };
 
 const rootReducer = combineReducers({
     auth: authReducer,
     userDetail: userReducer,
+    socket: gameSocketReducer
 });
 
 const store = createStore(rootReducer, {auth: initialState});

@@ -1,5 +1,5 @@
-import {v4 as uuidv4} from 'uuid';
 import Room from './Room';
+import {Player} from './Player';
 
 var rooms: Room[] = [];
 
@@ -21,7 +21,7 @@ function makeUserJoinOrCreateRoom(userId: string): Room {
     let joinedRoom: Room;
     const availableRoomIndex = getFirstAvailableRoomIndex();
     if (availableRoomIndex !== -1) {
-        rooms[availableRoomIndex].secondPlayerId = userId;
+        rooms[availableRoomIndex].secondPlayer = new Player(userId);
         joinedRoom = rooms[availableRoomIndex];
     } else {
         joinedRoom = createRoom(userId);
@@ -30,7 +30,7 @@ function makeUserJoinOrCreateRoom(userId: string): Room {
     return joinedRoom;
 }
 
-function getUsersAssignedRoom(userId: string): Room {
+function getUsersAssignedRoom(userId: string): Room | undefined {
     return rooms.find(room => room.containsUser(userId));
 }
 
@@ -38,8 +38,8 @@ function getFirstAvailableRoomIndex(): number {
     return rooms.findIndex(room => !room.isFull());
 }
 
-function createRoom(userId: string): Room {
-    const newRoom = new Room(uuidv4(), userId);
+function createRoom(firstPlayerId: string): Room {
+    const newRoom = new Room(firstPlayerId);
     rooms.push(newRoom);
     return newRoom;
 }

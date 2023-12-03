@@ -4,8 +4,10 @@ import {useSelector} from 'react-redux';
 import {AppState} from '../../../store/store';
 import {Card} from '../../../core/interfaces/card.interface';
 import {io} from 'socket.io-client';
+import {useNavigate} from 'react-router-dom';
 
 export function ChooseCards() {
+    const navigate = useNavigate();
     const socket = io('http://localhost:3001');
     const userDetails = useSelector((state: AppState) => state.userDetail.userDetails);
     const [cards, setCards] = useState<Card[]>([]);
@@ -41,9 +43,9 @@ export function ChooseCards() {
     }
 
     function onConfirm() {
-        var username = userDetails!.username;
+        const username = userDetails!.username;
         socket.emit('chose', {userId, username, cardIds: getSelectedCardsIds()});
-        window.location.href = '/game/fight';
+        navigate('/game/fight');
     }
 
     function getSelectedCardsIds(): Card[] {
