@@ -1,8 +1,9 @@
 # Étape de build
-FROM node:alpine as build
+FROM node:20.8-alpine as build
 WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
+COPY .env.production ./.env
 COPY . .
 RUN npm run build
 

@@ -13,15 +13,18 @@ services:
       - proxy-web
     depends_on:
       - db-card
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
 
   front:
-    image: nginx:1.25.0-alpine3.17
+    build: ../front
     environment:
       REACT_APP_NOTIFICATION_SOCKET_URL: ws://localhost:80/notification-service/socket
     networks:
       - proxy-web
-    volumes:
-      - ./front:/usr/share/nginx/html
+    ports:
+      - "8080:80"
+
   proxy-reverse:
     image: nginx:1.25.0-alpine3.17
     networks:
@@ -34,7 +37,6 @@ services:
       - user-service
       - card-service
       - store-service
-      - notification-service
       - authentication-service
 
   esb:
@@ -79,6 +81,8 @@ services:
       - proxy-web
     depends_on:
       - user-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
 
   store-service:
     build:
@@ -94,14 +98,9 @@ services:
     depends_on:
       - card-service
       - db-store
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
 
-  notification-service:
-    build:
-      context: ../notification-micro-service
-      dockerfile: ../docker/dockerfile
-    networks:
-      - proxy-web
-      - esb
 
   db-user:
     image: postgres
