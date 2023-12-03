@@ -4,14 +4,12 @@ import React, {useEffect, useState} from 'react';
 import Room from '../classes/Room';
 import {useNavigate} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
-import {clearSocket, setSocket} from '../../../store/gameSocketReducer';
+import {setSocket} from '../../../store/gameSocketReducer';
 import {Player} from '../classes/Player';
-import {log} from 'util';
 
 export function JoinGame() {
     const navigate = useNavigate();
     const userId = Cookies.get('userId');
-    const [clickedJoined, setClickedJoined] = useState(false);
     const [joinedRoom, setJoinedRoom] = useState<Room | null>(null);
 
     const START_DELAY = 3000;
@@ -24,7 +22,7 @@ export function JoinGame() {
             const newSocket = io('http://localhost:3001');
             dispatch(setSocket(newSocket));
         }
-    }, [socket, dispatch]);
+    }, []);
 
     useEffect(() => {
         if (socket) {
@@ -40,15 +38,8 @@ export function JoinGame() {
         }
     }, [socket]);
 
-    const t = (a: any, b: any) => {
-        console.log(a, b)
-        return 't'
-    }
-
-
     const joinGame = () => {
         socket.emit('join-game', {userId});
-        setClickedJoined(true);
     };
 
     return (
@@ -56,10 +47,10 @@ export function JoinGame() {
             <div className="ui center">
                 <button className="huge ui primary button"
                         onClick={joinGame}
-                        disabled={clickedJoined}
+                        disabled={!!joinedRoom}
                 >Join a game
                 </button>
-                {joinedRoom && joinedRoom.firstPlayer !== null && <table>
+                {joinedRoom && joinedRoom.firstPlayer && <table>
                     <thead>
                     <tr>
                         <th>Players</th>
@@ -67,16 +58,16 @@ export function JoinGame() {
                     </thead>
                     <tbody>
                     <tr>
-                        <td>{joinedRoom.firstPlayer?.id}</td>
+                        <td>{joinedRoom.firstPlayer.id}</td>
                     </tr>
-                    {joinedRoom.secondPlayer !== null && joinedRoom.secondPlayer.id &&
+                    {joinedRoom.secondPlayer &&
                         <tr>
                             <td>{joinedRoom.secondPlayer.id}</td>
                         </tr>
                     }
                     </tbody>
                 </table>}
-                {joinedRoom !== null && joinedRoom.firstPlayer.id && joinedRoom.secondPlayer?.id &&
+                {joinedRoom && joinedRoom.firstPlayer && joinedRoom.secondPlayer &&
                     <p>Game is full!<br/>Starting in {START_DELAY / 1000} seconds</p>}
             </div>
         </div>

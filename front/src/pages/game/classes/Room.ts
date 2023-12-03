@@ -1,6 +1,7 @@
 import {Player} from './Player';
 
 export default class Room {
+    public static readonly MAX_ENERGY: number = 2000;
 
     constructor(id: string, firstPlayer: Player, secondPlayer: Player | null, turn: Player | null) {
         this._id = id;
@@ -50,6 +51,6 @@ export default class Room {
     }
 
     isFull(): boolean {
-        return this._firstPlayer !== null && this._secondPlayer !== null;
+        return !!this._firstPlayer && !!this._secondPlayer;
     }
 }

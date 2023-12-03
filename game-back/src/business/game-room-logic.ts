@@ -44,6 +44,6 @@ function createRoom(firstPlayerId: string): Room {
     return newRoom;
 }
 
-export function removeRoom(roomid:string){
-    rooms = rooms.filter(room=> room.id == roomid);
+export function removeRoom(roomId:string){
+    rooms = rooms.filter(room => room.id !== roomId);
 }

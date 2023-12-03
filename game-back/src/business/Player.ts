@@ -2,7 +2,7 @@ import Card from './Card';
 import {Serializable} from './Serializable';
 
 export class Player extends Serializable {
-    private readonly DEFAULT_ENERGY: number = 200;
+    private readonly DEFAULT_ENERGY: number = 2000;
 
     private readonly _id: string;
     private _username: string;

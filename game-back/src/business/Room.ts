@@ -29,6 +29,10 @@ export default class Room extends Serializable {
         return this._turn;
     }
 
+    set turn(value: Player | null) {
+        this._turn = value;
+    }
+
     get id(): string {
         return this._id;
     }
@@ -37,12 +41,9 @@ export default class Room extends Serializable {
         return this._firstPlayer;
     }
 
-    public setPlayerCards(userId: string, cards: Card[]) {
-        if (this.firstPlayer.id == userId) {
-            this._firstPlayer.cards = cards;
-        } else if (this._secondPlayer) {
-            this._secondPlayer.cards = cards;
-        }
+    private setPlayersCards(userId: string, playersCards: Card[]) {
+        const player = this.firstPlayer.id === userId ? this.firstPlayer : this.secondPlayer;
+        player.cards = playersCards;
     }
 
     public containsUser(userId: string): boolean {
@@ -54,43 +55,46 @@ export default class Room extends Serializable {
     }
 
     public attackPlayer(userId: string, attackingCard: Card, targetCard: Card) {
+        const isCurrentPlayerFirstPlayer = userId === this.firstPlayer.id;
+        const currentPlayer = isCurrentPlayerFirstPlayer ? this.firstPlayer : this.secondPlayer;
+        const otherPlayer = isCurrentPlayerFirstPlayer ? this.secondPlayer : this.firstPlayer;
 
-        const currentPlayer = userId === this.firstPlayer.id ? this.firstPlayer : this.secondPlayer;
+        attackingCard = currentPlayer?.cards.find(card => card.id === attackingCard.id);
+        targetCard = otherPlayer?.cards.find(card => card.id === targetCard.id);
+
         const isActionPerformable = this.isActionPerformable(currentPlayer, attackingCard, targetCard);
-
-        if (isActionPerformable && !!currentPlayer) {
-            const otherPlayer = userId === this.firstPlayer.id ? this.secondPlayer : this.firstPlayer;
-
-            if (!otherPlayer) {
-                return;
-            }
-
+        if (!!otherPlayer && isActionPerformable && !!currentPlayer) {
             currentPlayer.energy -= attackingCard.energy;
             targetCard.hp -= attackingCard.attack;
+
+            if (targetCard.hp <= 0) {
+                otherPlayer.cards = otherPlayer.cards.filter(card => card.id !== targetCard.id);
+            }
+
             this._turn = otherPlayer;
         }
     }
 
     public getWinner(): string | undefined {
         if (!!this.firstPlayer && this.firstPlayer.cards.length == 0) {
-            return this.firstPlayer?.id;
+            return this.firstPlayer.id;
         } else if (!!this.secondPlayer && this.secondPlayer.cards.length == 0) {
-            return this.secondPlayer?.id;
+            return this.secondPlayer.id;
         } else {
             return undefined;
         }
     }
 
-    public serialize(): any {
-        return {
-            id: this.id,
-            firstPlayer: this.firstPlayer.serialize(),
-            secondPlayer: this.secondPlayer?.serialize(),
-            playerTurn: this.turn
-        }
+    public initGame(userId: string, playersCards: Card[]): void {
+        this.setPlayersCards(userId, playersCards);
+        this.turn = this.pickRandomPlayer();
     }
 
-    public pickRandomPlayer(): Player | undefined {
+    private playersChoseCards(): boolean {
+        return this.firstPlayer.cards.length && !!this.secondPlayer?.cards.length;
+    }
+
+    private pickRandomPlayer(): Player | undefined {
         const randomIndex = Math.round(Math.random()); // 0 or 1
         return randomIndex === 0 ? this.firstPlayer : this.secondPlayer;
     }

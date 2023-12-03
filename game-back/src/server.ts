@@ -1,8 +1,9 @@
 import {Server} from 'socket.io';
 import express from 'express';
 import {createServer} from 'http';
-import {onUserJoinRoom} from './business/game-room-logic';
+import {onUserJoinRoom, removeRoom} from './business/game-room-logic';
 import Room from './business/Room';
+import Card from './business/Card';
 
 const {PORT = 3001} = process.env;
 
@@ -20,38 +21,41 @@ io.on('connection', socket => {
 
     socket.on('join-game', ({userId}) => {
         usersRoom = onUserJoinRoom(userId);
-        if (usersRoom !== null) {
+        if (usersRoom) {
             socket.join(usersRoom.id);
             io.to(usersRoom.id).emit('joined', usersRoom.serialize());
         }
     });
 
     socket.on('get-info-game', () => {
-        if (usersRoom !== null) {
+        if (usersRoom) {
             io.to(usersRoom.id).emit('info-game', usersRoom.serialize());
         }
     });
 
-    socket.on('chose', ({userId, cardIds}) => {
-        if (usersRoom !== null) {
-
-            // Todo : Room's responsibility
-            usersRoom.setPlayerCards(userId, cardIds);
-            usersRoom.pickRandomPlayer();
+    socket.on('chose', ({userId, cards}: {userId: string, cards: Card[]}) => {
+        if (usersRoom) {
+            usersRoom.initGame(userId, cards);
             io.to(usersRoom.id).emit('info-game', usersRoom.serialize());
         }
     });
 
     socket.on('attack', ({userId, attackingCard, targetCard}) => {
-        if (usersRoom !== null) {
+        if (usersRoom) {
             usersRoom.attackPlayer(userId, attackingCard, targetCard);
 
             const winnerId = usersRoom.getWinner();
-            if (winnerId != null) {
+            if (winnerId) {
                 const gain = Math.floor(Math.random() * (100 - 10 + 1) + 10);
                 io.to(usersRoom.id).emit('winner', {winnerId, gain});
             }
+
             io.to(usersRoom.id).emit('info-game', usersRoom.serialize());
+
+            if (winnerId) {
+                removeRoom(usersRoom.id);
+                usersRoom = null;
+            }
         }
     });
 });
